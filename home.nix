@@ -19,9 +19,14 @@ user: { config, pkgs, ... }: {
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" ];
-      theme = "robbyrussell";
     };
   };
+
+  programs.starship = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+  xdg.configFile."starship.toml".source = ./dotfiles/starship.toml;
 
   programs.zoxide = {
     enable = true;
