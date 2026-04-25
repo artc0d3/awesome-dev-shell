@@ -1,0 +1,6 @@
+# Editors
+.idea/
+*.iml
+.vscode/
+*.swp
+*~
