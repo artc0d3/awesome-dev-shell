@@ -9,6 +9,7 @@
     jq
     cloc
     uv
+    fd
   ];
 
   programs.git = {
@@ -39,5 +40,20 @@
   programs.zoxide = {
     enable = true;
     options = [ "--cmd cd" ];
+  };
+
+  programs.bat.enable = true;
+
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    git = true;
+    icons = "auto";
+  };
+
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+    defaultCommand = "fd --type f --hidden --exclude .git";
   };
 }
