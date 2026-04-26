@@ -39,7 +39,7 @@
     enable = true;
     enableZshIntegration = true;
   };
-  xdg.configFile."starship.toml".source = ./dotfiles/starship.toml;
+  xdg.configFile."starship.toml".source = ./configs/starship/config.toml;
 
   programs.zoxide = {
     enable = true;
