@@ -1,11 +1,8 @@
-{ config, pkgs, ... }:
-let
-  user = import ./user.nix;
-in {
+{ config, pkgs, ... }: {
   wsl.enable = true;
-  wsl.defaultUser = user.username;
+  wsl.defaultUser = "dev";
 
-  users.users.${user.username} = {
+  users.users.dev = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     shell = pkgs.zsh;
@@ -21,7 +18,7 @@ in {
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.${user.username} = import ./home.nix user;
+    users.dev = import ./home.nix;
   };
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
@@ -29,12 +26,10 @@ in {
   system.activationScripts.postRebuildHint.text = ''
     echo ""
     echo "#######"
-    echo "# To customize your environment, clone the repo and run customize.sh:"
-    echo "#   git clone https://github.com/artc0d3/awesome-dev-shell ~/.nix-config"
-    echo "#   cd ~/.nix-config && ./customize.sh"
-    echo "#"
-    echo "# To rebuild manually after customizing:"
-    echo "#   sudo nixos-rebuild switch --flake ~/.nix-config#wsl"
+    echo "# System has been rebuilt. To make everything smooth, I recommend to restart the WSL instance:"
+    echo "#   exit"
+    echo "#   wsl --shutdown"
+    echo "#   wsl -d nixos"
     echo "#######"
     echo ""
   '';
