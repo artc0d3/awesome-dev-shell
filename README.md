@@ -121,6 +121,16 @@ for the most common extension points though.
 
 You can include your own ZSH configuration in `~/.zshrc.local`, which is sourced at the end of the main `~/.zshrc`.
 
+### Configuration templates
+
+Some config files can't be managed by Nix because tools need to modify them at runtime. ADS ships opinionated
+templates and copies them on demand — once copied, the files are yours to edit freely.
+
+```bash
+ads config list          # show available tools and their config files
+ads config init <tool>   # copy templates (skips existing files)
+```
+
 ### Other tools
 
 Most of the personal configuration living somewhere in you home directory is not managed by Nix and can be edited

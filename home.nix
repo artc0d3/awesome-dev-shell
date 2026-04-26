@@ -1,7 +1,13 @@
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+let
+  ads = import ./ads { inherit pkgs; };
+in
+{
   home.stateVersion = "25.11";
 
-  home.packages = with pkgs; [
+  home.packages = [
+    ads
+  ] ++ (with pkgs; [
     _1password-cli
     bubblewrap
     claude-code
@@ -15,7 +21,7 @@
     socat
     uv
     vfox
-  ];
+  ]);
 
   programs.git = {
     enable = true;
@@ -62,6 +68,4 @@
     enableZshIntegration = true;
     defaultCommand = "fd --type f --hidden --exclude .git";
   };
-
-  home.file.".claude/settings.json".source = ./configs/claude-code/settings.json;
 }
