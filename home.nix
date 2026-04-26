@@ -3,6 +3,7 @@
 
   home.packages = with pkgs; [
     _1password-cli
+    bubblewrap
     claude-code
     cloc
     fd
@@ -11,6 +12,7 @@
     podman-compose
     ripgrep
     sd
+    socat
     uv
     vfox
   ];
@@ -60,4 +62,6 @@
     enableZshIntegration = true;
     defaultCommand = "fd --type f --hidden --exclude .git";
   };
+
+  home.file.".claude/settings.json".source = ./configs/claude-code/settings.json;
 }
