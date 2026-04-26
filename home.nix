@@ -4,6 +4,9 @@
   home.packages = with pkgs; [
     neovim
     vfox
+    sd
+    ripgrep
+    jq
   ];
 
   programs.git = {
