@@ -7,6 +7,7 @@
     sd
     ripgrep
     jq
+    cloc
   ];
 
   programs.git = {
