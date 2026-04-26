@@ -29,6 +29,12 @@
 
   services.dbus.implementation = "dbus";
 
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+    defaultNetwork.settings.dns_enabled = true;
+  };
+
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;

@@ -7,6 +7,7 @@
     fd
     jq
     neovim
+    podman-compose
     ripgrep
     sd
     uv
