@@ -20,6 +20,9 @@ user: { config, pkgs, ... }: {
       enable = true;
       plugins = [ "git" ];
     };
+    initContent = ''
+      [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+    '';
   };
 
   programs.starship = {
