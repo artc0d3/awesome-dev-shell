@@ -13,6 +13,15 @@
 
   programs.zsh.enable = true;
 
+  # Nix-ld is required for tools that download and execute binaries, such as vfox.
+  programs.nix-ld.enable = true;
+  programs.nix-ld.libraries = with pkgs; [
+    stdenv.cc.cc.lib
+    zlib
+    openssl
+    icu
+  ];
+
   services.dbus.implementation = "dbus";
 
   home-manager = {

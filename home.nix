@@ -3,6 +3,7 @@
 
   home.packages = with pkgs; [
     neovim
+    vfox
   ];
 
   programs.git = {
@@ -20,6 +21,7 @@
     };
     initContent = ''
       [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+      eval "$(vfox activate zsh)"
     '';
   };
 
