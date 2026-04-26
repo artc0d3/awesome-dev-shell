@@ -2,14 +2,14 @@
   home.stateVersion = "25.11";
 
   home.packages = with pkgs; [
-    neovim
-    vfox
-    sd
-    ripgrep
-    jq
     cloc
-    uv
     fd
+    jq
+    neovim
+    ripgrep
+    sd
+    uv
+    vfox
   ];
 
   programs.git = {
