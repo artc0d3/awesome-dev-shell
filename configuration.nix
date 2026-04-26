@@ -46,12 +46,12 @@
 
   system.activationScripts.postRebuildHint.text = ''
     echo ""
-    echo "#######"
+    echo "################################################################################"
     echo "# System has been rebuilt. To make everything smooth, I recommend to restart the WSL instance:"
     echo "#   exit"
     echo "#   wsl --shutdown"
     echo "#   wsl -d nixos"
-    echo "#######"
+    echo "################################################################################"
     echo ""
   '';
 
