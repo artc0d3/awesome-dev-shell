@@ -8,6 +8,7 @@
     ripgrep
     jq
     cloc
+    uv
   ];
 
   programs.git = {
