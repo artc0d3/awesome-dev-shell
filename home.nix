@@ -2,6 +2,7 @@
   home.stateVersion = "25.11";
 
   home.packages = with pkgs; [
+    _1password-cli
     cloc
     fd
     jq
@@ -15,6 +16,7 @@
   programs.git = {
     enable = true;
     signing.format = null;
+    settings.core.sshCommand = "ssh.exe";
   };
 
   programs.zsh = {
