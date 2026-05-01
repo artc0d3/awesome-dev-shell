@@ -9,13 +9,11 @@ in
     ads
   ] ++ (with pkgs; [
     _1password-cli
-    bubblewrap
     claude-code
     cloc
     fd
     jq
     neovim
-    podman-compose
     ripgrep
     sd
     socat
@@ -26,7 +24,6 @@ in
   programs.git = {
     enable = true;
     signing.format = null;
-    settings.core.sshCommand = "ssh.exe";
   };
 
   programs.zsh = {
