@@ -1,6 +1,7 @@
 # WSL-specific configuration.
 # Everything in this file is specific to running NixOS under Windows Subsystem for Linux.
-{ config, pkgs, ... }: {
+{ config, pkgs, ... }:
+{
   wsl.enable = true;
   wsl.defaultUser = "dev";
 

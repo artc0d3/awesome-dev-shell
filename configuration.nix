@@ -1,5 +1,12 @@
-{ config, pkgs, lib, ... }: {
-  nixpkgs.config.allowUnfreePredicate = pkg:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
+{
+  nixpkgs.config.allowUnfreePredicate =
+    pkg:
     builtins.elem (lib.getName pkg) [
       "1password-cli"
       "claude-code"
@@ -22,7 +29,10 @@
     users.dev = import ./home.nix;
   };
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   system.stateVersion = "25.11";
 }

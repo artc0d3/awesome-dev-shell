@@ -7,7 +7,8 @@ in
 
   home.packages = [
     ads
-  ] ++ (with pkgs; [
+  ]
+  ++ (with pkgs; [
     _1password-cli
     claude-code
     cloc

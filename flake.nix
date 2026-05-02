@@ -13,15 +13,22 @@
     };
   };
 
-  outputs = { nixpkgs, nixos-wsl, home-manager, ... }: {
-    nixosConfigurations.wsl = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      modules = [
-        nixos-wsl.nixosModules.default
-        home-manager.nixosModules.home-manager
-        ./configuration.nix
-        ./hosts/wsl.nix
-      ];
+  outputs =
+    {
+      nixpkgs,
+      nixos-wsl,
+      home-manager,
+      ...
+    }:
+    {
+      nixosConfigurations.wsl = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [
+          nixos-wsl.nixosModules.default
+          home-manager.nixosModules.home-manager
+          ./configuration.nix
+          ./hosts/wsl.nix
+        ];
+      };
     };
-  };
 }
