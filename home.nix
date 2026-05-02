@@ -14,6 +14,7 @@ in
     fd
     jq
     neovim
+    nixfmt
     ripgrep
     sd
     socat
