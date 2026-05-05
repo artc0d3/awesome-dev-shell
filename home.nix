@@ -45,8 +45,8 @@ in
   programs.starship = {
     enable = true;
     enableZshIntegration = true;
+    settings = builtins.fromTOML (builtins.readFile ./configs/starship/config.toml);
   };
-  xdg.configFile."starship.toml".source = ./configs/starship/config.toml;
 
   programs.zoxide = {
     enable = true;
