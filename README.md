@@ -70,7 +70,6 @@ the user environment.
    from [nix-community/NixOS-WSL GitHub releases](https://github.com/nix-community/NixOS-WSL/releases/tag/2511.7.1).
 3. Import it into WSL:
     ```bash
-    # From the directory where you downloaded the tarball:
     wsl --import nixos "$HOME\nixos" nixos.wsl --version 2
     ```
 4. Enter the NixOS shell:
@@ -82,9 +81,15 @@ the user environment.
     sudo nix-channel --update
     sudo nixos-rebuild switch
     ```
-6. Apply awesome-dev-shell configuration:
+6. Exit NixOS and restart your WSL instance to make sure all updates are applied:
     ```bash
-    sudo nixos-rebuild switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl" --no-write-lock-file --refresh
+    exit
+    wsl --shutdown
+    wsl -d nixos
+    ```
+7. Apply awesome-dev-shell configuration:
+    ```bash
+    sudo nixos-rebuild switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl" --refresh
     ```
 
 ### 1Password

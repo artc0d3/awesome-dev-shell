@@ -1,6 +1,11 @@
 # WSL-specific configuration.
 # Everything in this file is specific to running NixOS under Windows Subsystem for Linux.
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   git = {
     # Use the Windows SSH binary for 1Password SSH agent forwarding.
@@ -32,9 +37,9 @@ let
       bubblewrap
     ];
   };
-  git = {
-    # Use the Windows SSH binary for 1Password SSH agent forwarding.
-    home-manager.users.dev.programs.git.settings.core.sshCommand = "ssh.exe";
+  wsl = {
+    wsl.enable = true;
+    wsl.defaultUser = "dev";
   };
 in
 lib.mkMerge [
