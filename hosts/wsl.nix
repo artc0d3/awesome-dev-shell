@@ -40,7 +40,6 @@ let
   wsl = {
     wsl.enable = true;
     wsl.defaultUser = "dev";
-    services.dbus.implementation = "dbus";
   };
 in
 lib.mkMerge [
