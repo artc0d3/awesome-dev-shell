@@ -62,7 +62,39 @@ the user environment.
 
 - **claude-code** — Anthropic's official CLI for pair-programming with Claude.
 
-## Installation
+## Getting started
+
+### Prerequisites
+
+#### SSH agent
+
+We use 1Password's SSH agent to manage your SSH keys and secrets. The setup will forward SSH requests from WSL to the
+1Password SSH agent running on Windows, allowing you to authenticate with your SSH keys stored in 1Password without
+having to manage separate keys for WSL.
+
+To set the SSH agent up, follow these steps:
+
+1. Install 1Password desktop app on your Windows machine and sign in to your account.
+2. Setup 1Password as your SSH agent. You can follow the official 1Password documentation to do
+   this: [1Password SSH Agent](https://developer.1password.com/docs/ssh/agent/).
+3. Install [npiperelay](https://github.com/jstarks/npiperelay). It's needed to forward the 1Password SSH agent from Windows to WSL.
+   You can use `winget` or `scoop` (if you have it) to install npiperelay. Restart your terminal after installation to
+   make sure the `npiperelay` command is available in your PATH.
+   ```powershell
+   winget install --id=Jstarks.Npiperelay
+   # or
+   scoop install npiperelay
+   ```
+
+ADS will set up the agent forwarding automatically. You can use Linux-native SSH clients in WSL, and they will
+communicate with the 1Password SSH agent on Windows seamlessly.
+
+The forwarding bridge runs as a user-level systemd service. You can check its status with:
+```bash
+systemctl --user status ssh-agent-bridge
+```
+  
+### Installation
 
 1. Make sure WSL2 is installed and enabled on your Windows machine. You can follow the official Microsoft documentation
    to set up WSL2: [Install WSL](https://docs.microsoft.com/en-us/windows/wsl/install).
@@ -90,27 +122,6 @@ the user environment.
 7. Apply awesome-dev-shell configuration:
     ```bash
     sudo nixos-rebuild switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl" --refresh
-    ```
-
-### 1Password
-
-To use 1Password CLI, you need to have 1Password installed on your Windows machine and be signed in to your account.
-The 1Password CLI will be available in the NixOS shell, allowing you to manage your secrets directly from the terminal.
-Git is already configured to use 1Password SSH agent.
-
-Follow these steps to make sure that 1Password CLI works in the NixOS shell:
-
-1. Install 1Password desktop app on your Windows machine and sign in to your account.
-2. Setup 1Password as your SSH agent. You can follow the official 1Password documentation to do
-   this: [1Password SSH Agent](https://developer.1password.com/docs/ssh/agent/).
-3. In NixOS shell, ensure that WSL interop is enabled:
-    ```bash
-    cat /etc/wsl.conf
-   
-    # Should contain this section:
-    [interop]
-    appendWindowsPath=true
-    enabled=true
     ```
 
 ## Customization

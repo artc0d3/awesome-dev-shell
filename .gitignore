@@ -7,3 +7,6 @@
 
 # Claude Code
 settings.local.json
+
+# NixOS builds
+result/
