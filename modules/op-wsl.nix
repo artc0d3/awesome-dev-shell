@@ -6,6 +6,7 @@
   config,
   pkgs,
   lib,
+  username,
   ...
 }:
 let
@@ -29,7 +30,7 @@ in
 
       socketPath = lib.mkOption {
         type = lib.types.str;
-        default = "/home/dev/.ssh/agent.sock";
+        default = "/home/${username}/.ssh/agent.sock";
         description = "Path to the Unix socket for the bridged SSH agent.";
       };
     };
@@ -37,14 +38,14 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf cfg.enable {
-      home-manager.users.dev.home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
+      home-manager.users.${username}.home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
         run ${pkgs.uv}/bin/uv tool install wslop
       '';
-      home-manager.users.dev.home.sessionPath = [ "$HOME/.local/bin" ];
+      home-manager.users.${username}.home.sessionPath = [ "$HOME/.local/bin" ];
     })
 
     (lib.mkIf cfg.sshAgent.enable {
-      home-manager.users.dev = {
+      home-manager.users.${username} = {
         home.sessionVariables.SSH_AUTH_SOCK = cfg.sshAgent.socketPath;
 
         systemd.user.services.ssh-agent-bridge = {

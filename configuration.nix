@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  username,
   ...
 }:
 {
@@ -11,7 +12,7 @@
       "claude-code"
     ];
 
-  users.users.dev = {
+  users.users.${username} = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     shell = pkgs.zsh;
@@ -25,7 +26,8 @@
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
-    users.dev = import ./home.nix;
+    extraSpecialArgs = { inherit username; };
+    users.${username} = import ./home.nix;
   };
 
   nix.settings.experimental-features = [

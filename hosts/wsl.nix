@@ -4,6 +4,7 @@
   config,
   pkgs,
   lib,
+  username,
   ...
 }:
 let
@@ -30,19 +31,19 @@ let
     virtualisation.podman.enable = true;
     virtualisation.podman.dockerCompat = true;
     virtualisation.podman.defaultNetwork.settings.dns_enabled = true;
-    home-manager.users.dev.home.packages = with pkgs; [
+    home-manager.users.${username}.home.packages = with pkgs; [
       podman-compose
     ];
   };
   # Bubblewrap is required for sandboxing in WSL. Used by Claude Code.
   sandbox = {
-    home-manager.users.dev.home.packages = with pkgs; [
+    home-manager.users.${username}.home.packages = with pkgs; [
       bubblewrap
     ];
   };
   wsl = {
     wsl.enable = true;
-    wsl.defaultUser = "dev";
+    wsl.defaultUser = username;
   };
 in
 lib.mkMerge [
