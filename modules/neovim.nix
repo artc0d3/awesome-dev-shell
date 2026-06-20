@@ -24,6 +24,12 @@ in
       # Treesitter parsers are compiled on the fly; they need a C compiler and make.
       gcc
       gnumake
+
+      # Telescope dependencies.
+      fd
+      ripgrep
+
+      lazygit
     ];
 
     # Clone the LazyVim starter into ~/.config/nvim the first time
