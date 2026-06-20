@@ -107,18 +107,33 @@ step "Running smoke tests..."
 fd_output=$(wsl -d "$DISTRO" -- fd -V 2>&1 | tr -d '\r')
 if ! echo "$fd_output" | grep -q "^fd"; then
     fail "Smoke test for \"fd\" failed.\nExpected a line starting with: fd\nActual output:\n$fd_output"
+else
+    success "Smoke test for \"fd\" passed."
 fi
 
 # Test: vfox
 vfox_output=$(wsl -d "$DISTRO" -- vfox --version 2>&1 | tr -d '\r')
 if ! echo "$vfox_output" | grep -q "^vfox version"; then
     fail "Smoke test for \"vfox\" failed.\nExpected a line starting with: vfox version\nActual output:\n$vfox_output"
+else
+    success "Smoke test for \"vfox\" passed."
 fi
 
 # Test: zsh
 zsh_output=$(wsl -d "$DISTRO" -- echo '$0' 2>&1 | tr -d '\r')
 if ! echo "$zsh_output" | grep -q "^zsh$"; then
     fail "Smoke test for ZSH failed.\nExpected a line with: zsh\nActual output:\n$zsh_output"
+else
+    success "Smoke test for ZSH passed."
+fi
+
+# Test: op cli
+op_cli_output=$(wsl -d "$DISTRO" -- op --version 2>&1 | tr -d '\r')
+echo "\"$op_cli_output\""
+if ! echo "$op_cli_output" | grep -Eq "^[0-9.]+$"; then
+    fail "Smoke test for \"op cli\" failed.\nExpected a line with: version number\nActual output:\n$op_cli_output"
+else
+    success "Smoke test for \"op cli\" passed."
 fi
 
 success "Smoke test succeeded!"

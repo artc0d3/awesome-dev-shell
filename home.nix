@@ -1,15 +1,23 @@
-{ config, pkgs, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   ads = import ./ads { inherit pkgs; };
 in
 {
+  imports = [
+    ./modules/op-wsl.nix
+  ];
+
   home.stateVersion = "25.11";
 
   home.packages = [
     ads
   ]
   ++ (with pkgs; [
-    _1password-cli
     claude-code
     cloc
     fd
@@ -22,6 +30,9 @@ in
     uv
     vfox
   ]);
+
+  programs.op-wsl.enable = true;
+  programs.op-wsl.sshAgent.enable = true;
 
   programs.git = {
     enable = true;
