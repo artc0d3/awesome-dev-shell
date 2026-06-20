@@ -33,7 +33,7 @@ in
 
   programs.op-wsl.enable = true;
   programs.op-wsl.sshAgent.enable = true;
-  
+
   programs.git = {
     enable = true;
     signing.format = null;
