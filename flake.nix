@@ -23,12 +23,13 @@
     {
       nixosConfigurations.wsl = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
-        specialArgs = { username = "dev"; };
+        specialArgs = {
+          username = "dev";
+        };
         modules = [
           nixos-wsl.nixosModules.default
           home-manager.nixosModules.home-manager
           ./configuration.nix
-          ./modules/op-wsl.nix
           ./hosts/wsl.nix
         ];
       };

@@ -52,10 +52,6 @@ lib.mkMerge [
   sandbox
   wsl
   {
-    programs.op-wsl.enable = true;
-    programs.op-wsl.sshAgent.enable = true;
-  }
-  {
     system.activationScripts.postRebuildHint.text = ''
       echo ""
       echo "################################################################################"

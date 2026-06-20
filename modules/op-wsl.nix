@@ -6,7 +6,6 @@
   config,
   pkgs,
   lib,
-  username,
   ...
 }:
 let
@@ -30,7 +29,7 @@ in
 
       socketPath = lib.mkOption {
         type = lib.types.str;
-        default = "/home/${username}/.ssh/agent.sock";
+        default = "${config.home.homeDirectory}/.ssh/agent.sock";
         description = "Path to the Unix socket for the bridged SSH agent.";
       };
     };
@@ -38,26 +37,24 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf cfg.enable {
-      home-manager.users.${username}.home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
+      home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
         run ${pkgs.uv}/bin/uv tool install wslop
       '';
-      home-manager.users.${username}.home.sessionPath = [ "$HOME/.local/bin" ];
+      home.sessionPath = [ "$HOME/.local/bin" ];
     })
 
     (lib.mkIf cfg.sshAgent.enable {
-      home-manager.users.${username} = {
-        home.sessionVariables.SSH_AUTH_SOCK = cfg.sshAgent.socketPath;
+      home.sessionVariables.SSH_AUTH_SOCK = cfg.sshAgent.socketPath;
 
-        systemd.user.services.ssh-agent-bridge = {
-          Unit.Description = "Bridge Windows SSH agent (1Password) to Linux via npiperelay";
-          Service = {
-            ExecStartPre = "-${pkgs.coreutils}/bin/rm -f ${cfg.sshAgent.socketPath}";
-            ExecStart = toString bridgeScript;
-            Restart = "on-failure";
-            RestartSec = 5;
-          };
-          Install.WantedBy = [ "default.target" ];
+      systemd.user.services.ssh-agent-bridge = {
+        Unit.Description = "Bridge Windows SSH agent (1Password) to Linux via npiperelay";
+        Service = {
+          ExecStartPre = "-${pkgs.coreutils}/bin/rm -f ${cfg.sshAgent.socketPath}";
+          ExecStart = toString bridgeScript;
+          Restart = "on-failure";
+          RestartSec = 5;
         };
+        Install.WantedBy = [ "default.target" ];
       };
     })
   ];

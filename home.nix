@@ -8,6 +8,10 @@ let
   ads = import ./ads { inherit pkgs; };
 in
 {
+  imports = [
+    ./modules/op-wsl.nix
+  ];
+
   home.stateVersion = "25.11";
 
   home.packages = [
@@ -27,6 +31,9 @@ in
     vfox
   ]);
 
+  programs.op-wsl.enable = true;
+  programs.op-wsl.sshAgent.enable = true;
+  
   programs.git = {
     enable = true;
     signing.format = null;
