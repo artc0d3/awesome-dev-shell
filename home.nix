@@ -1,9 +1,17 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 let
   ads = import ./ads { inherit pkgs; };
 in
 {
   home.stateVersion = "25.11";
+
+  home.sessionPath = [
+    "$HOME/.local/bin"
+  ];
+
+  home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
+    run ${pkgs.uv}/bin/uv tool install wslop
+  '';
 
   home.packages = [
     ads
