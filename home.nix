@@ -9,6 +9,7 @@ let
 in
 {
   imports = [
+    ./modules/neovim.nix
     ./modules/op-wsl.nix
   ];
 
@@ -22,7 +23,6 @@ in
     cloc
     fd
     jq
-    neovim
     nixfmt
     ripgrep
     sd
@@ -30,6 +30,8 @@ in
     uv
     vfox
   ]);
+
+  programs.neovim-lazyvim.enable = true;
 
   programs.op-wsl.enable = true;
   programs.op-wsl.sshAgent.enable = true;
