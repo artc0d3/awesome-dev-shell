@@ -40,41 +40,6 @@ let
       bubblewrap
     ];
   };
-  # Bridge the Windows SSH agent (1Password) to a Linux Unix socket via npiperelay.
-  # This lets the native Linux ssh client authenticate through the Windows SSH agent,
-  # so all tools (git, rsync, ansible, etc.) work without needing ssh.exe wrappers.
-  # On first login, the shell imports PATH into the systemd user manager so that
-  # services can find Windows executables like npiperelay.exe via WSL interop.
-  # Prerequisite: npiperelay.exe must be installed on Windows:
-  #   go install github.com/jstarks/npiperelay@latest
-  ssh =
-    let
-      agentSock = "/home/dev/.ssh/agent.sock";
-      bridgeScript = pkgs.writeShellScript "ssh-agent-bridge" ''
-        relay=$(/sbin/wslpath "$(/mnt/c/Windows/System32/where.exe npiperelay.exe)" | ${pkgs.coreutils}/bin/tr -d '\r')
-        echo "Starting SSH agent bridge. Listening on ${agentSock}, relaying to Windows pipe //./pipe/openssh-ssh-agent"
-        echo "Using pipe relay executable: $relay"
-        exec ${pkgs.socat}/bin/socat \
-          UNIX-LISTEN:${agentSock},fork \
-          EXEC:"$relay -ei -s //./pipe/openssh-ssh-agent",nofork
-      '';
-    in
-    {
-      home-manager.users.dev = {
-        home.sessionVariables.SSH_AUTH_SOCK = agentSock;
-
-        systemd.user.services.ssh-agent-bridge = {
-          Unit.Description = "Bridge Windows SSH agent (1Password) to Linux via npiperelay";
-          Service = {
-            ExecStartPre = "-${pkgs.coreutils}/bin/rm -f ${agentSock}";
-            ExecStart = toString bridgeScript;
-            Restart = "on-failure";
-            RestartSec = 5;
-          };
-          Install.WantedBy = [ "default.target" ];
-        };
-      };
-    };
   wsl = {
     wsl.enable = true;
     wsl.defaultUser = "dev";
@@ -84,8 +49,11 @@ lib.mkMerge [
   nix-ld
   podman
   sandbox
-  ssh
   wsl
+  {
+    programs.op-wsl.enable = true;
+    programs.op-wsl.sshAgent.enable = true;
+  }
   {
     system.activationScripts.postRebuildHint.text = ''
       echo ""

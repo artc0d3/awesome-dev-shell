@@ -27,6 +27,7 @@
           nixos-wsl.nixosModules.default
           home-manager.nixosModules.home-manager
           ./configuration.nix
+          ./modules/op-wsl.nix
           ./hosts/wsl.nix
         ];
       };
