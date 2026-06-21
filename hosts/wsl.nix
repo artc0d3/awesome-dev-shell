@@ -27,14 +27,6 @@ let
       zlib
     ];
   };
-  podman = {
-    virtualisation.podman.enable = true;
-    virtualisation.podman.dockerCompat = true;
-    virtualisation.podman.defaultNetwork.settings.dns_enabled = true;
-    home-manager.users.${username}.home.packages = with pkgs; [
-      podman-compose
-    ];
-  };
   # Bubblewrap is required for sandboxing in WSL. Used by Claude Code.
   sandbox = {
     home-manager.users.${username}.home.packages = with pkgs; [
@@ -46,21 +38,29 @@ let
     wsl.defaultUser = username;
   };
 in
-lib.mkMerge [
-  nix-ld
-  podman
-  sandbox
-  wsl
-  {
-    system.activationScripts.postRebuildHint.text = ''
-      echo ""
-      echo "################################################################################"
-      echo "# System has been rebuilt. To make everything smooth, I recommend to restart the WSL instance:"
-      echo "#   exit"
-      echo "#   wsl --shutdown"
-      echo "#   wsl -d nixos"
-      echo "################################################################################"
-      echo ""
-    '';
-  }
-]
+{
+  imports = [
+    ../modules/podman.nix
+  ];
+
+  config = lib.mkMerge [
+    nix-ld
+    sandbox
+    wsl
+    {
+      programs.podman-containers.enable = true;
+    }
+    {
+      system.activationScripts.postRebuildHint.text = ''
+        echo ""
+        echo "################################################################################"
+        echo "# System has been rebuilt. To make everything smooth, I recommend to restart the WSL instance:"
+        echo "#   exit"
+        echo "#   wsl --shutdown"
+        echo "#   wsl -d nixos"
+        echo "################################################################################"
+        echo ""
+      '';
+    }
+  ];
+}

@@ -20,9 +20,12 @@ RED='\033[0;31m'
 DARK_CYAN='\033[38;2;100;170;200m'
 RESET='\033[0m'
 
-step()    { echo -e "${CYAN}  ● $1${RESET}"; }
+step() { echo -e "${CYAN}  ● $1${RESET}"; }
 success() { echo -e "${GREEN}  ● $1${RESET}"; }
-fail()    { echo -e "${RED}$1${RESET}"; exit 1; }
+fail() {
+  echo -e "${RED}$1${RESET}"
+  exit 1
+}
 
 # Run wsl from a Windows-native directory to avoid path translation warnings
 wsl() { (cd /mnt/c && wsl.exe "$@"); }
@@ -32,11 +35,11 @@ BRANCH=""
 KEEP=false
 
 for arg in "$@"; do
-    if [[ "$arg" == "--keep" ]]; then
-        KEEP=true
-    elif [[ -z "$BRANCH" ]]; then
-        BRANCH="$arg"
-    fi
+  if [[ "$arg" == "--keep" ]]; then
+    KEEP=true
+  elif [[ -z "$BRANCH" ]]; then
+    BRANCH="$arg"
+  fi
 done
 
 # --- Configuration ---
@@ -54,12 +57,12 @@ wsl --unregister "$DISTRO" >/dev/null 2>&1 || true
 
 # Resolve branch name
 if [[ -z "$BRANCH" ]]; then
-    BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)
-    if [[ -n "$BRANCH" ]]; then
-        echo -e "${DARK_CYAN}  Using current branch: $BRANCH${RESET}"
-    else
-        fail "Error: No branch specified and not in a Git-managed directory."
-    fi
+  BRANCH=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || true)
+  if [[ -n "$BRANCH" ]]; then
+    echo -e "${DARK_CYAN}  Using current branch: $BRANCH${RESET}"
+  else
+    fail "Error: No branch specified and not in a Git-managed directory."
+  fi
 fi
 
 FLAKE_REF="github:artc0d3/awesome-dev-shell?ref=$BRANCH#wsl"
@@ -69,10 +72,10 @@ mkdir -p "$TEST_DIR"
 
 # Download NixOS-WSL distribution
 if [[ -f "$WSL_FILE" ]]; then
-    step "Existing NixOS distribution found in $WSL_FILE. Will use it for the test."
+  step "Existing NixOS distribution found in $WSL_FILE. Will use it for the test."
 else
-    step "Downloading NixOS distribution..."
-    curl -L -o "$WSL_FILE" "$DOWNLOAD_URL"
+  step "Downloading NixOS distribution..."
+  curl -L -o "$WSL_FILE" "$DOWNLOAD_URL"
 fi
 
 # Convert Linux paths to Windows paths for wsl --import
@@ -106,42 +109,51 @@ step "Running smoke tests..."
 # Test: fd
 fd_output=$(wsl -d "$DISTRO" -- fd -V 2>&1 | tr -d '\r')
 if ! echo "$fd_output" | grep -q "^fd"; then
-    fail "Smoke test for \"fd\" failed.\nExpected a line starting with: fd\nActual output:\n$fd_output"
+  fail "Smoke test for \"fd\" failed.\nExpected a line starting with: fd\nActual output:\n$fd_output"
 else
-    success "Smoke test for \"fd\" passed."
+  success "Smoke test for \"fd\" passed."
 fi
 
 # Test: vfox
 vfox_output=$(wsl -d "$DISTRO" -- vfox --version 2>&1 | tr -d '\r')
 if ! echo "$vfox_output" | grep -q "^vfox version"; then
-    fail "Smoke test for \"vfox\" failed.\nExpected a line starting with: vfox version\nActual output:\n$vfox_output"
+  fail "Smoke test for \"vfox\" failed.\nExpected a line starting with: vfox version\nActual output:\n$vfox_output"
 else
-    success "Smoke test for \"vfox\" passed."
+  success "Smoke test for \"vfox\" passed."
 fi
 
 # Test: zsh
 zsh_output=$(wsl -d "$DISTRO" -- echo '$0' 2>&1 | tr -d '\r')
 if ! echo "$zsh_output" | grep -q "^zsh$"; then
-    fail "Smoke test for ZSH failed.\nExpected a line with: zsh\nActual output:\n$zsh_output"
+  fail "Smoke test for ZSH failed.\nExpected a line with: zsh\nActual output:\n$zsh_output"
 else
-    success "Smoke test for ZSH passed."
+  success "Smoke test for ZSH passed."
 fi
 
 # Test: op cli
 op_cli_output=$(wsl -d "$DISTRO" -- op --version 2>&1 | tr -d '\r')
 echo "\"$op_cli_output\""
 if ! echo "$op_cli_output" | grep -Eq "^[0-9.]+$"; then
-    fail "Smoke test for \"op cli\" failed.\nExpected a line with: version number\nActual output:\n$op_cli_output"
+  fail "Smoke test for \"op cli\" failed.\nExpected a line with: version number\nActual output:\n$op_cli_output"
 else
-    success "Smoke test for \"op cli\" passed."
+  success "Smoke test for \"op cli\" passed."
+fi
+
+# Test: podman
+podman_output=$(wsl -d "$DISTRO" -- podman --version 2>&1 | tr -d '\r')
+echo "\"$podman_output\""
+if ! echo "$podman_output" | grep -Eq "^podman version [0-9.]+$"; then
+  fail "Smoke test for \"podman\" failed.\nExpected a line with: podman version x.y.z\nActual output:\n$podman_output"
+else
+  success "Smoke test for \"podman\" passed."
 fi
 
 success "Smoke test succeeded!"
 
 # Cleanup
 if [[ "$KEEP" == true ]]; then
-    step "Keeping test instance '$DISTRO'. Remove it manually with: wsl --unregister $DISTRO"
+  step "Keeping test instance '$DISTRO'. Remove it manually with: wsl --unregister $DISTRO"
 else
-    step "Removing test instance '$DISTRO'..."
-    wsl --unregister "$DISTRO"
+  step "Removing test instance '$DISTRO'..."
+  wsl --unregister "$DISTRO"
 fi
