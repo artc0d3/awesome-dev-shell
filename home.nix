@@ -26,10 +26,10 @@ in
     nixfmt
   ]);
 
-  programs.dev-tools.enable = true;
-  programs.neovim-lazyvim.enable = true;
-  programs.op-wsl.enable = true;
-  programs.op-wsl.sshAgent.enable = true;
-  programs.shell.enable = true;
-  programs.shell-tools.enable = true;
+  ads.dev-tools.enable = true;
+  ads.neovim-lazyvim.enable = true;
+  ads.op-wsl.enable = true;
+  ads.op-wsl.sshAgent.enable = true;
+  ads.shell.enable = true;
+  ads.shell-tools.enable = true;
 }

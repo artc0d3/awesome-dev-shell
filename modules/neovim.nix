@@ -10,10 +10,10 @@
   ...
 }:
 let
-  cfg = config.programs.neovim-lazyvim;
+  cfg = config.ads.neovim-lazyvim;
 in
 {
-  options.programs.neovim-lazyvim = {
+  options.ads.neovim-lazyvim = {
     enable = lib.mkEnableOption "Neovim with LazyVim starter configuration";
   };
 

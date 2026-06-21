@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.programs.dev-tools;
+  cfg = config.ads.dev-tools;
 in
 {
-  options.programs.dev-tools = {
+  options.ads.dev-tools = {
     enable = lib.mkEnableOption "developer workflow tools";
   };
 

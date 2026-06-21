@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.programs.shell-tools;
+  cfg = config.ads.shell-tools;
 in
 {
-  options.programs.shell-tools = {
+  options.ads.shell-tools = {
     enable = lib.mkEnableOption "general-purpose CLI productivity tools";
   };
 

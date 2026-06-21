@@ -27,8 +27,8 @@
   ];
 
   programs.zsh.enable = true;
-  programs.nix-ld-libs.enable = true;
-  programs.podman-containers.enable = true;
+  ads.nix-ld-libs.enable = true;
+  ads.podman-containers.enable = true;
 
   wsl.enable = true;
   wsl.defaultUser = username;

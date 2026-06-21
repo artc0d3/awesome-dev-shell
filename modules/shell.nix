@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.programs.shell;
+  cfg = config.ads.shell;
 in
 {
-  options.programs.shell = {
+  options.ads.shell = {
     enable = lib.mkEnableOption "Zsh + Starship shell configuration";
   };
 

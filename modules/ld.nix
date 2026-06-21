@@ -9,10 +9,10 @@
   ...
 }:
 let
-  cfg = config.programs.nix-ld-libs;
+  cfg = config.ads.nix-ld-libs;
 in
 {
-  options.programs.nix-ld-libs = {
+  options.ads.nix-ld-libs = {
     enable = lib.mkEnableOption "nix-ld with libraries for Node.js and JDK";
   };
 

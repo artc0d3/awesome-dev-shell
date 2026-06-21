@@ -7,10 +7,10 @@
   ...
 }:
 let
-  cfg = config.programs.podman-containers;
+  cfg = config.ads.podman-containers;
 in
 {
-  options.programs.podman-containers = {
+  options.ads.podman-containers = {
     enable = lib.mkEnableOption "Podman container runtime with Docker compatibility";
   };
 
