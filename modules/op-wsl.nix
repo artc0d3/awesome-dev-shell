@@ -44,6 +44,7 @@ in
     })
 
     (lib.mkIf cfg.sshAgent.enable {
+      home.packages = [ pkgs.socat ];
       home.sessionVariables.SSH_AUTH_SOCK = cfg.sshAgent.socketPath;
 
       systemd.user.services.ssh-agent-bridge = {
