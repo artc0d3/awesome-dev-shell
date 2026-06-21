@@ -9,7 +9,7 @@
   ...
 }:
 let
-  cfg = config.programs.op-wsl;
+  cfg = config.ads.op-wsl;
 
   bridgeScript = pkgs.writeShellScript "ssh-agent-bridge" ''
     relay=$(/sbin/wslpath "$(/mnt/c/Windows/System32/where.exe npiperelay.exe)" | ${pkgs.coreutils}/bin/tr -d '\r')
@@ -21,7 +21,7 @@ let
   '';
 in
 {
-  options.programs.op-wsl = {
+  options.ads.op-wsl = {
     enable = lib.mkEnableOption "1Password CLI (wslop) integration";
 
     sshAgent = {
