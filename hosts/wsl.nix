@@ -7,18 +7,6 @@
   username,
   ...
 }:
-let
-  # Bubblewrap is required for sandboxing in WSL. Used by Claude Code.
-  sandbox = {
-    home-manager.users.${username}.home.packages = with pkgs; [
-      bubblewrap
-    ];
-  };
-  wsl = {
-    wsl.enable = true;
-    wsl.defaultUser = username;
-  };
-in
 {
   imports = [
     ../modules/ld.nix
@@ -26,9 +14,9 @@ in
   ];
 
   config = lib.mkMerge [
-    sandbox
-    wsl
     {
+      wsl.enable = true;
+      wsl.defaultUser = username;
       programs.nix-ld-libs.enable = true;
       programs.podman-containers.enable = true;
     }
