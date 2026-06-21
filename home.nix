@@ -2,6 +2,7 @@
   config,
   pkgs,
   lib,
+  username,
   ...
 }:
 let
@@ -9,6 +10,7 @@ let
 in
 {
   imports = [
+    ./modules/claude.nix
     ./modules/dev-tools.nix
     ./modules/neovim.nix
     ./modules/op-wsl.nix
@@ -16,13 +18,18 @@ in
     ./modules/shell-tools.nix
   ];
 
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
   home.stateVersion = "25.11";
 
   home.packages = [
     ads
-    pkgs.nixfmt
+    pkgs.nixfmt-rfc-style
+    pkgs.podman
+    pkgs.podman-compose
   ];
 
+  ads.claude.enable = true;
   ads.dev-tools.enable = true;
   ads.neovim-lazyvim.enable = true;
   ads.op-wsl.enable = true;
