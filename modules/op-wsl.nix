@@ -12,7 +12,7 @@ let
   cfg = config.ads.op-wsl;
 
   bridgeScript = pkgs.writeShellScript "ssh-agent-bridge" ''
-    relay=$(/sbin/wslpath "$(/mnt/c/Windows/System32/where.exe npiperelay.exe)" | ${pkgs.coreutils}/bin/tr -d '\r')
+    relay=$(/usr/bin/wslpath "$(/mnt/c/Windows/System32/where.exe npiperelay.exe)" | ${pkgs.coreutils}/bin/tr -d '\r')
     echo "Starting SSH agent bridge. Listening on ${cfg.sshAgent.socketPath}, relaying to Windows pipe //./pipe/openssh-ssh-agent"
     echo "Using pipe relay executable: $relay"
     exec ${pkgs.socat}/bin/socat \
