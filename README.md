@@ -85,6 +85,13 @@ wsl -d Ubuntu
 # or: wsl -d awesome-dev-shell
 ```
 
+When setting up, use `dev` as user name (**important**) and set the password of your choice. Then, update the Ubuntu packages:
+
+```bash
+sudo apt update
+sudo apt upgrade
+```
+
 ### 2. Install the Nix package manager
 
 We use the [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer)
@@ -133,9 +140,11 @@ authenticate with SSH keys stored in 1Password without managing separate keys.
 2. Enable the SSH agent in 1Password: **Settings > Developer > SSH Agent**.
 3. Install [npiperelay](https://github.com/jstarks/npiperelay) — needed to bridge the Windows
    named pipe to a Unix socket:
+
    ```powershell
    winget install --id=Jstarks.Npiperelay
    ```
+
    Restart your terminal after installation so `npiperelay.exe` is on your PATH.
 
 **Back in WSL:**
