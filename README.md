@@ -1,35 +1,32 @@
-# Awesome dev shell
+# Awesome Dev Shell
 
-A batteries-included, opinionated **NixOS-on-WSL** environment that turns a fresh Windows laptop into a proper dev box
-in a few commands — no manual `apt install` marathons, no "works on my machine."
+A batteries-included, opinionated **Home Manager** environment that turns a fresh Ubuntu-WSL instance
+into a proper dev box in a few commands — no manual `apt install` marathons, no "works on my machine."
 
-🎯 **Built for** software developers living mostly in the **Node.js** and **Java/JVM** worlds who want a polished
+Built for software developers living mostly in the **Node.js** and **Java/JVM** worlds who want a polished
 Linux shell on Windows without becoming part-time sysadmins.
 
-✨ **What you get:**
+**What you get:**
 
-- 🧊 **Reproducible** — one Nix flake describes the whole setup; rebuild it anywhere, get the same shell.
-- ⚡ **Fast & modern CLI** — zsh + starship + the full `eza`/`bat`/`fd`/`ripgrep` lineup out of the box.
-- 🔁 **Polyglot runtimes** — `vfox` for Node/Java/Go/Python versions, `uv` for Python projects.
-- 🐳 **Containers ready** — rootless podman with Docker compatibility.
-- 🔐 **1Password-native** — secrets and SSH keys flow in from your Windows vault automatically.
-- 🤖 **AI on tap** — `claude-code` pre-installed for pair-programming from the terminal.
-
-If that sounds like your kind of Tuesday, read on. ⬇️
+- **Reproducible** — one Nix flake describes the whole setup; rebuild it anywhere, get the same shell.
+- **Fast & modern CLI** — zsh + starship + the full `eza`/`bat`/`fd`/`ripgrep` lineup out of the box.
+- **Polyglot runtimes** — `vfox` for Node/Java/Go/Python versions, `uv` for Python projects.
+- **Containers ready** — podman with Docker compatibility.
+- **1Password-native** — secrets and SSH keys flow in from your Windows vault automatically.
+- **AI on tap** — `claude-code` pre-installed for pair-programming from the terminal.
 
 ## Loadout
 
-Built on **NixOS 25.11** (via [NixOS-WSL](https://github.com/nix-community/NixOS-WSL)) with home-manager 25.11 managing
-the user environment.
+Built on **Nix** with **Home Manager 25.11** managing the user environment on top of Ubuntu-WSL.
 
-### 🐚 Shell & prompt
+### Shell & prompt
 
 - **zsh** + **oh-my-zsh** — the shell, with autosuggestions and syntax highlighting baked in.
 - **starship** — fast, minimal, infinitely customizable prompt.
 - **zoxide** — `cd` that learns where you actually go.
 - **fzf** — fuzzy finder for files, history, and anything piped into it.
 
-### 🛠️ Modern CLI essentials
+### Modern CLI essentials
 
 - **eza** — a friendlier `ls` with icons and git status.
 - **bat** — `cat` with syntax highlighting and paging.
@@ -39,90 +36,145 @@ the user environment.
 - **jq** — slice and dice JSON from the command line.
 - **cloc** — count lines of code, grouped by language.
 
-### ✍️ Editor
+### Editor
 
-- **neovim** — modal editing, configured to taste.
+- **neovim** — modal editing with LazyVim starter configuration.
 
-### 📦 Dev tooling & version managers
+### Dev tooling & version managers
 
-- **vfox** — polyglot version manager (Node, Python, Go, JDK, …).
+- **vfox** — polyglot version manager (Node, Python, Go, JDK, ...).
 - **uv** — ultra-fast Python package and project manager.
 
-### 🐳 Containers
+### Containers
 
-- **podman** (with Docker compat) — daemonless, rootless container runtime.
+- **podman** — daemonless, rootless container runtime with Docker compatibility.
 - **podman-compose** — `docker-compose` for podman.
 
-### 🔐 Secrets & Git
+### Secrets & Git
 
 - **1Password CLI** — pull secrets and SSH keys straight from your vault.
-- **git** — wired up to use the 1Password SSH agent via `ssh.exe`.
+- **git** — wired up to use the 1Password SSH agent via npiperelay bridge.
 
-### 🤖 AI
+### AI
 
 - **claude-code** — Anthropic's official CLI for pair-programming with Claude.
 
 ## Getting started
 
-### Prerequisites
+### 1. Create the Ubuntu WSL instance
 
-#### SSH agent
+Make sure WSL2 is installed and enabled on your Windows machine. Open PowerShell and run:
 
-We use 1Password's SSH agent to manage your SSH keys and secrets. The setup will forward SSH requests from WSL to the
-1Password SSH agent running on Windows, allowing you to authenticate with your SSH keys stored in 1Password without
-having to manage separate keys for WSL.
+```powershell
+wsl --install Ubuntu
+```
 
-To set the SSH agent up, follow these steps:
+This downloads and creates an Ubuntu instance. You'll be prompted to create a Unix username and password.
+Use `dev` as the username to match the default configuration (or change the username in `flake.nix`).
 
-1. Install 1Password desktop app on your Windows machine and sign in to your account.
-2. Setup 1Password as your SSH agent. You can follow the official 1Password documentation to do
-   this: [1Password SSH Agent](https://developer.1password.com/docs/ssh/agent/).
-3. Install [npiperelay](https://github.com/jstarks/npiperelay). It's needed to forward the 1Password SSH agent from Windows to WSL.
-   You can use `winget` or `scoop` (if you have it) to install npiperelay. Restart your terminal after installation to
-   make sure the `npiperelay` command is available in your PATH.
+If Ubuntu is already installed, you can create a fresh instance under a custom name:
+
+```powershell
+wsl --install Ubuntu --name awesome-dev-shell
+```
+
+Enter the instance:
+
+```powershell
+wsl -d Ubuntu
+# or: wsl -d awesome-dev-shell
+```
+
+### 2. Install the Nix package manager
+
+We use the [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer)
+which enables flakes and the `nix` command out of the box:
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
+```
+
+Close and reopen your terminal (or run `source /etc/profile`) so that `nix` is on your PATH.
+
+Verify the installation:
+
+```bash
+nix --version
+```
+
+### 3. Apply Awesome Dev Shell
+
+Run Home Manager with the flake:
+
+```bash
+nix run home-manager -- switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl"
+```
+
+This installs all packages and writes all configuration files. On the first run it may take a few
+minutes to download and build everything.
+
+### 4. Set zsh as default shell
+
+```bash
+echo $(which zsh) | sudo tee -a /etc/shells
+chsh -s $(which zsh)
+```
+
+Log out and back in (or restart WSL) for the change to take effect.
+
+### 5. Set up 1Password SSH agent (optional)
+
+The setup forwards SSH requests from WSL to the 1Password SSH agent running on Windows, so you can
+authenticate with SSH keys stored in 1Password without managing separate keys.
+
+**On Windows:**
+
+1. Install the 1Password desktop app and sign in.
+2. Enable the SSH agent in 1Password: **Settings > Developer > SSH Agent**.
+3. Install [npiperelay](https://github.com/jstarks/npiperelay) — needed to bridge the Windows
+   named pipe to a Unix socket:
    ```powershell
    winget install --id=Jstarks.Npiperelay
-   # or
-   scoop install npiperelay
    ```
+   Restart your terminal after installation so `npiperelay.exe` is on your PATH.
 
-ADS will set up the agent forwarding automatically. You can use Linux-native SSH clients in WSL, and they will
-communicate with the 1Password SSH agent on Windows seamlessly.
+**Back in WSL:**
 
-The forwarding bridge runs as a user-level systemd service. You can check its status with:
+The SSH agent bridge runs as a user-level systemd service (started automatically). Check its status:
+
 ```bash
 systemctl --user status ssh-agent-bridge
 ```
-  
-### Installation
 
-1. Make sure WSL2 is installed and enabled on your Windows machine. You can follow the official Microsoft documentation
-   to set up WSL2: [Install WSL](https://docs.microsoft.com/en-us/windows/wsl/install).
-2. Download the release tarball for NixOS-WSL 25.11
-   from [nix-community/NixOS-WSL GitHub releases](https://github.com/nix-community/NixOS-WSL/releases/tag/2511.7.1).
-3. Import it into WSL:
-    ```bash
-    wsl --import nixos "$HOME\nixos" nixos.wsl --version 2
-    ```
-4. Enter the NixOS shell:
-    ```bash
-    wsl -d nixos
-    ```
-5. Update the package list and install updates:
-    ```bash
-    sudo nix-channel --update
-    sudo nixos-rebuild switch
-    ```
-6. Exit NixOS and restart your WSL instance to make sure all updates are applied:
-    ```bash
-    exit
-    wsl --shutdown
-    wsl -d nixos
-    ```
-7. Apply awesome-dev-shell configuration:
-    ```bash
-    sudo nixos-rebuild switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl" --refresh
-    ```
+### 6. Set up rootless Podman (optional)
+
+Podman is installed by Home Manager, but rootless containers need a small amount of system-level
+setup on Ubuntu:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y uidmap slirp4netns
+```
+
+Verify:
+
+```bash
+podman run --rm docker.io/library/hello-world
+```
+
+## Rebuilding after changes
+
+If you've cloned the repo locally and made changes:
+
+```bash
+home-manager switch --flake .#wsl
+```
+
+To pull the latest remote version:
+
+```bash
+nix run home-manager -- switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl" --refresh
+```
 
 ## Customization
 
@@ -149,5 +201,5 @@ ads config init <tool>   # copy templates (skips existing files)
 
 ### Other tools
 
-Most of the personal configuration living somewhere in you home directory is not managed by Nix and can be edited
+Most of the personal configuration living somewhere in your home directory is not managed by Nix and can be edited
 directly.
