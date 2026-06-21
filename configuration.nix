@@ -7,15 +7,10 @@
 }:
 {
   imports = [
+    ./modules/claude.nix
     ./modules/ld.nix
     ./modules/podman.nix
   ];
-
-  nixpkgs.config.allowUnfreePredicate =
-    pkg:
-    builtins.elem (lib.getName pkg) [
-      "claude-code"
-    ];
 
   users.users.${username} = {
     isNormalUser = true;
@@ -23,10 +18,9 @@
     shell = pkgs.zsh;
   };
 
-  environment.systemPackages = with pkgs; [
-  ];
-
   programs.zsh.enable = true;
+
+  ads.claude.enable = true;
   ads.nix-ld-libs.enable = true;
   ads.podman-containers.enable = true;
 

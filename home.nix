@@ -20,11 +20,8 @@ in
 
   home.packages = [
     ads
-  ]
-  ++ (with pkgs; [
-    claude-code
-    nixfmt
-  ]);
+    pkgs.nixfmt
+  ];
 
   ads.dev-tools.enable = true;
   ads.neovim-lazyvim.enable = true;
