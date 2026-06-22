@@ -24,7 +24,7 @@ in
 
   home.packages = [
     ads
-    pkgs.nixfmt-rfc-style
+    pkgs.nixfmt
     pkgs.podman
     pkgs.podman-compose
   ];
