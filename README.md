@@ -92,6 +92,14 @@ sudo apt update
 sudo apt upgrade
 ```
 
+Make sure that the WSL-interop is enabled - check if `/etc/wsl.conf` contains the following snippet. If not, add it:
+
+```plain
+[interop]
+appendWindowsPath=true
+enabled=true
+```
+
 ### 2. Install the Nix package manager
 
 We use the [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer)
