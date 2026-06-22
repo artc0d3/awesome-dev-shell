@@ -48,6 +48,11 @@ in
       home.packages = [ pkgs.socat ];
       home.sessionVariables.SSH_AUTH_SOCK = cfg.sshAgent.socketPath;
 
+      home.activation.ensureSshDirectory = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+        run mkdir -p "${config.home.homeDirectory}/.ssh"
+        run chmod 700 "${config.home.homeDirectory}/.ssh"
+      '';
+
       systemd.user.services.ssh-agent-bridge = {
         Unit.Description = "Bridge Windows SSH agent (1Password) to Linux via npiperelay";
         Service = {
