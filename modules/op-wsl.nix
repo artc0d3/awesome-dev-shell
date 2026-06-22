@@ -37,10 +37,10 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf cfg.enable {
+      home.sessionPath = [ "${config.home.homeDirectory}/.local/bin" ];
       home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
         run ${pkgs.uv}/bin/uv tool install wslop
       '';
-      home.sessionPath = [ "$HOME/.local/bin" ];
     })
 
     (lib.mkIf cfg.sshAgent.enable {
