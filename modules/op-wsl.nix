@@ -39,6 +39,7 @@ in
     (lib.mkIf cfg.enable {
       home.sessionPath = [ "${config.home.homeDirectory}/.local/bin" ];
       home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
+        export PATH="${config.home.homeDirectory}/.local/bin:$PATH"
         run ${pkgs.uv}/bin/uv tool install wslop
       '';
     })
