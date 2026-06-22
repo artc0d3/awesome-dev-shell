@@ -119,7 +119,13 @@ echo $(which zsh) | sudo tee -a /etc/shells
 chsh -s $(which zsh)
 ```
 
-Log out and back in (or restart WSL) for the change to take effect.
+Log out and and restart WSL instance for the changes to take effect:
+
+```bash
+exit
+wsl -t ads
+wsl -d ads
+```
 
 ### 5. Set up 1Password SSH agent (optional)
 
@@ -153,9 +159,8 @@ Podman is installed by Home Manager, but rootless containers need a small amount
 setup on Ubuntu:
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y uidmap slirp4netns
-sudo usermod --add-subuids 200000-201000 --add-subgids 200000-201000 dev
+sudo apt update
+sudo apt install uidmap slirp4netns
 ```
 
 Verify:
