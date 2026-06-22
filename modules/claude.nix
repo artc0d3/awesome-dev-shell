@@ -3,7 +3,6 @@
   config,
   pkgs,
   lib,
-  username,
   ...
 }:
 let
@@ -15,13 +14,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.config.allowUnfreePredicate =
-      pkg:
-      builtins.elem (lib.getName pkg) [
-        "claude-code"
-      ];
-
-    home-manager.users.${username}.home.packages = with pkgs; [
+    home.packages = with pkgs; [
       claude-code
     ];
   };

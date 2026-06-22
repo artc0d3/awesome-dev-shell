@@ -12,7 +12,7 @@ let
   cfg = config.ads.op-wsl;
 
   bridgeScript = pkgs.writeShellScript "ssh-agent-bridge" ''
-    relay=$(/sbin/wslpath "$(/mnt/c/Windows/System32/where.exe npiperelay.exe)" | ${pkgs.coreutils}/bin/tr -d '\r')
+    relay=$(/usr/bin/wslpath "$(/mnt/c/Windows/System32/where.exe npiperelay.exe)" | ${pkgs.coreutils}/bin/tr -d '\r')
     echo "Starting SSH agent bridge. Listening on ${cfg.sshAgent.socketPath}, relaying to Windows pipe //./pipe/openssh-ssh-agent"
     echo "Using pipe relay executable: $relay"
     exec ${pkgs.socat}/bin/socat \
@@ -37,14 +37,21 @@ in
 
   config = lib.mkMerge [
     (lib.mkIf cfg.enable {
+      home.sessionPath = [ "${config.home.homeDirectory}/.local/bin" ];
       home.activation.installWslop = lib.hm.dag.entryAfter [ "installPackages" ] ''
+        export PATH="${config.home.homeDirectory}/.local/bin:$PATH"
         run ${pkgs.uv}/bin/uv tool install wslop
       '';
-      home.sessionPath = [ "$HOME/.local/bin" ];
     })
 
     (lib.mkIf cfg.sshAgent.enable {
+      home.packages = [ pkgs.socat ];
       home.sessionVariables.SSH_AUTH_SOCK = cfg.sshAgent.socketPath;
+
+      home.activation.ensureSshDirectory = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+        run mkdir -p "${config.home.homeDirectory}/.ssh"
+        run chmod 700 "${config.home.homeDirectory}/.ssh"
+      '';
 
       systemd.user.services.ssh-agent-bridge = {
         Unit.Description = "Bridge Windows SSH agent (1Password) to Linux via npiperelay";

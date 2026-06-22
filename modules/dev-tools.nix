@@ -10,7 +10,7 @@ let
 in
 {
   options.ads.dev-tools = {
-    enable = lib.mkEnableOption "developer workflow tools";
+    enable = lib.mkEnableOption "Developer workflow tools";
   };
 
   config = lib.mkIf cfg.enable {
