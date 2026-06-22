@@ -63,29 +63,22 @@ Built on **Nix** with **Home Manager 25.11** managing the user environment on to
 
 ### 1. Create the Ubuntu WSL instance
 
-Make sure WSL2 is installed and enabled on your Windows machine. Open PowerShell and run:
+Make sure WSL2 is installed and enabled on your Windows machine. Open PowerShell and create a fresh instance:
 
 ```powershell
-wsl --install Ubuntu
+wsl --install Ubuntu --name ads
 ```
 
 This downloads and creates an Ubuntu instance. You'll be prompted to create a Unix username and password.
 Use `dev` as the username to match the default configuration (or change the username in `flake.nix`).
 
-If Ubuntu is already installed, you can create a fresh instance under a custom name:
-
-```powershell
-wsl --install Ubuntu --name awesome-dev-shell
-```
-
 Enter the instance:
 
 ```powershell
-wsl -d Ubuntu
-# or: wsl -d awesome-dev-shell
+wsl -d ads 
 ```
 
-When setting up, use `dev` as user name (**important**) and set the password of your choice. Then, update the Ubuntu packages:
+Update the Ubuntu packages:
 
 ```bash
 sudo apt update
@@ -94,10 +87,8 @@ sudo apt upgrade
 
 Make sure that the WSL-interop is enabled - check if `/etc/wsl.conf` contains the following snippet. If not, add it:
 
-```plain
-[interop]
-appendWindowsPath=true
-enabled=true
+```bash
+printf '\n[interop]\nenabled = true\nappendWindowsPath = true\n' | sudo tee -a /etc/wsl.conf
 ```
 
 ### 2. Install the Nix package manager
