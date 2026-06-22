@@ -14,6 +14,7 @@ in
     ./modules/dev-tools.nix
     ./modules/neovim.nix
     ./modules/op-wsl.nix
+    ./modules/podman.nix
     ./modules/shell.nix
     ./modules/shell-tools.nix
   ];
@@ -33,6 +34,7 @@ in
   ads.dev-tools.enable = true;
   ads.neovim-lazyvim.enable = true;
   ads.op-wsl.enable = true;
+  ads.podman.enable = true;
   ads.op-wsl.sshAgent.enable = true;
   ads.shell.enable = true;
   ads.shell-tools.enable = true;

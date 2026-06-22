@@ -72,23 +72,11 @@ wsl --install Ubuntu --name ads
 This downloads and creates an Ubuntu instance. You'll be prompted to create a Unix username and password.
 Use `dev` as the username to match the default configuration (or change the username in `flake.nix`).
 
-Enter the instance:
-
-```powershell
-wsl -d ads 
-```
-
 Update the Ubuntu packages:
 
 ```bash
 sudo apt update
 sudo apt upgrade
-```
-
-Make sure that the WSL-interop is enabled - check if `/etc/wsl.conf` contains the following snippet. If not, add it:
-
-```bash
-printf '\n[interop]\nenabled = true\nappendWindowsPath = true\n' | sudo tee -a /etc/wsl.conf
 ```
 
 ### 2. Install the Nix package manager
@@ -100,7 +88,12 @@ which enables flakes and the `nix` command out of the box:
 curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 ```
 
-Close and reopen your terminal (or run `source /etc/profile`) so that `nix` is on your PATH.
+Close and reopen your terminal so that `nix` is on your PATH:
+
+```bash
+exit
+wsl -d ads
+```
 
 Verify the installation:
 
@@ -162,6 +155,7 @@ setup on Ubuntu:
 ```bash
 sudo apt-get update
 sudo apt-get install -y uidmap slirp4netns
+sudo usermod --add-subuids 200000-201000 --add-subgids 200000-201000 dev
 ```
 
 Verify:
