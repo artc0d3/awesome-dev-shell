@@ -1,15 +1,10 @@
 {
-  config,
-  pkgs,
-  lib,
   username,
   ...
 }:
-let
-  ads = import ./ads { inherit pkgs; };
-in
 {
   imports = [
+    ./modules/ads-tools.nix
     ./modules/claude.nix
     ./modules/dev-tools.nix
     ./modules/neovim.nix
@@ -23,13 +18,7 @@ in
   home.homeDirectory = "/home/${username}";
   home.stateVersion = "26.05";
 
-  home.packages = [
-    ads
-    pkgs.nixfmt
-    pkgs.podman
-    pkgs.podman-compose
-  ];
-
+  ads.ads-tools.enable = true;
   ads.claude.enable = true;
   ads.dev-tools.enable = true;
   ads.neovim-lazyvim.enable = true;

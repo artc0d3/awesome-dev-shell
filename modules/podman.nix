@@ -18,6 +18,11 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = [
+      pkgs.podman
+      pkgs.podman-compose
+    ];
+
     xdg.configFile."containers/policy.json".text = builtins.toJSON {
       default = [ { type = "insecureAcceptAnything"; } ];
     };
