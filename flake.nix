@@ -19,11 +19,7 @@
       homeConfigurations.wsl = home-manager.lib.homeManagerConfiguration {
         pkgs = import nixpkgs {
           system = "x86_64-linux";
-          config.allowUnfreePredicate =
-            pkg:
-            builtins.elem (nixpkgs.lib.getName pkg) [
-              "claude-code"
-            ];
+          config.allowUnfree = true;
         };
         extraSpecialArgs = {
           username = "dev";
