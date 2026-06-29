@@ -16,7 +16,11 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       cloc
-      devcontainer
+      (pkgs.writeShellScriptBin "devcontainer" ''
+        exec ${pkgs.devcontainer}/bin/devcontainer \
+          --docker-path ${pkgs.podman}/bin/podman \
+          "$@"
+      '')
       mise
       uv
     ];
