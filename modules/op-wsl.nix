@@ -58,7 +58,7 @@ in
         Service = {
           ExecStartPre = "-${pkgs.coreutils}/bin/rm -f ${cfg.sshAgent.socketPath}";
           ExecStart = toString bridgeScript;
-          Restart = "on-failure";
+          Restart = "always";
           RestartSec = 5;
         };
         Install.WantedBy = [ "default.target" ];
