@@ -126,11 +126,18 @@ if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
 }
 Write-Success 'WSL is available.'
 
-$wingetAvailable = [bool](Get-Command winget.exe -ErrorAction SilentlyContinue)
-if ($wingetAvailable) {
-    Write-Success 'winget is available.'
+$npiperelayInstalled = [bool](Get-Command npiperelay.exe -ErrorAction SilentlyContinue)
+$scoopAvailable      = [bool](Get-Command scoop          -ErrorAction SilentlyContinue)
+$wingetAvailable     = [bool](Get-Command winget.exe     -ErrorAction SilentlyContinue)
+
+if ($npiperelayInstalled) {
+    Write-Success 'npiperelay is already on PATH - installation will be skipped.'
+} elseif ($scoopAvailable) {
+    Write-Success 'scoop is available - it will be used to install npiperelay.'
+} elseif ($wingetAvailable) {
+    Write-Success 'winget is available - it will be used to install npiperelay (scoop not found).'
 } else {
-    Write-Warn 'winget is not available - optional npiperelay step will be skipped.'
+    Write-Warn 'Neither scoop nor winget is available - optional npiperelay step will be skipped.'
 }
 
 # Gather user input ---------------------------------------------------------
@@ -232,18 +239,29 @@ Write-Success 'Default shell set to zsh.'
 # 8. SSH-agent forwarding ---------------------------------------------------
 if ($setupSshAgent) {
     Step-Header 8 'Installing npiperelay for 1Password SSH-agent forwarding'
-    if ($wingetAvailable) {
+    if ($npiperelayInstalled) {
+        Write-Success 'npiperelay is already on PATH - nothing to install.'
+    } elseif ($scoopAvailable) {
+        Write-Step 'scoop install npiperelay'
+        & scoop install npiperelay
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success 'npiperelay installed via scoop.'
+        } else {
+            Write-Warn ("scoop exited {0}. If npiperelay is already installed this is harmless; otherwise install manually." -f $LASTEXITCODE)
+        }
+    } elseif ($wingetAvailable) {
+        Write-Step 'winget install Jstarks.Npiperelay'
         & winget.exe install --id=Jstarks.Npiperelay --accept-package-agreements --accept-source-agreements --silent
         # winget returns non-zero when the package is already installed; treat that as OK.
         if ($LASTEXITCODE -eq 0) {
-            Write-Success 'npiperelay installed.'
+            Write-Success 'npiperelay installed via winget.'
         } else {
             Write-Warn ("winget exited {0}. If npiperelay is already installed this is harmless; otherwise install manually." -f $LASTEXITCODE)
         }
-        Write-Info 'Remember to enable the agent: 1Password > Settings > Developer > SSH Agent.'
     } else {
-        Write-Warn 'winget unavailable. Install npiperelay manually: https://github.com/jstarks/npiperelay'
+        Write-Warn 'Neither scoop nor winget is available. Install npiperelay manually: https://github.com/jstarks/npiperelay'
     }
+    Write-Info 'Remember to enable the agent: 1Password > Settings > Developer > SSH Agent.'
 } else {
     Step-Header 8 'Skipping SSH-agent forwarding setup'
     Write-Info 'Skipped on request.'
