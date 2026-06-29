@@ -223,12 +223,8 @@ Write-Success 'Home Manager configuration applied.'
 # 7. zsh as default shell ---------------------------------------------------
 Step-Header 7 'Setting zsh as default shell'
 $zshSetup = @'
-set -euo pipefail
-ZSH=$(command -v zsh)
-if ! grep -qxF "$ZSH" /etc/shells; then
-    echo "$ZSH" | sudo tee -a /etc/shells >/dev/null
-fi
-sudo chsh -s "$ZSH" dev
+command -v zsh | sudo tee -a /etc/shells
+chsh -s \$(which zsh)
 '@
 Invoke-WslDev -Distro $distroName -Script $zshSetup
 Write-Success 'Default shell set to zsh.'
