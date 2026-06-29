@@ -24,7 +24,7 @@ in
       };
       initContent = ''
         [ -f ~/.zshrc.local ] && source ~/.zshrc.local
-        eval "$(vfox activate zsh)"
+        eval "$(mise activate zsh)"
       '';
     };
 
