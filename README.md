@@ -61,7 +61,23 @@ Built on **Nix** with **Home Manager 25.11** managing the user environment on to
 
 ## Getting started
 
-### 1. Create the Ubuntu WSL instance
+The fastest way to get up and running is the bundled PowerShell installer. If you'd rather see (or
+customize) each step, the manual walkthrough further down covers the same ground.
+
+### Quick install (recommended)
+
+Make sure WSL2 is installed and enabled on Windows, then run from an elevated PowerShell prompt:
+
+```powershell
+irm https://raw.githubusercontent.com/artc0d3/awesome-dev-shell/main/install.ps1 | iex
+```
+
+When it finishes, launch your new shell with `wsl -d <distro-name>` (or just `wsl` if you set it as
+the default).
+
+### Manual installation
+
+#### 1. Create the Ubuntu WSL instance
 
 Make sure WSL2 is installed and enabled on your Windows machine. Open PowerShell and create a fresh instance:
 
@@ -79,7 +95,7 @@ sudo apt update
 sudo apt upgrade
 ```
 
-### 2. Install the Nix package manager
+#### 2. Install the Nix package manager
 
 We use the [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer)
 which enables flakes and the `nix` command out of the box:
@@ -101,7 +117,7 @@ Verify the installation:
 nix --version
 ```
 
-### 3. Apply Awesome Dev Shell
+#### 3. Apply Awesome Dev Shell
 
 Run Home Manager with the flake:
 
@@ -112,7 +128,7 @@ nix run home-manager -- switch --flake "github:artc0d3/awesome-dev-shell?ref=mai
 This installs all packages and writes all configuration files. On the first run it may take a few
 minutes to download and build everything.
 
-### 4. Set zsh as default shell
+#### 4. Set zsh as default shell
 
 ```bash
 echo $(which zsh) | sudo tee -a /etc/shells
@@ -127,7 +143,7 @@ wsl -t ads
 wsl -d ads
 ```
 
-### 5. Set up 1Password SSH agent (optional)
+#### 5. Set up 1Password SSH agent (optional)
 
 The setup forwards SSH requests from WSL to the 1Password SSH agent running on Windows, so you can
 authenticate with SSH keys stored in 1Password without managing separate keys.
@@ -153,7 +169,7 @@ The SSH agent bridge runs as a user-level systemd service (started automatically
 systemctl --user status ssh-agent-bridge
 ```
 
-### 6. Set up rootless Podman (optional)
+#### 6. Set up rootless Podman (optional)
 
 Podman is installed by Home Manager, but rootless containers need a small amount of system-level
 setup on Ubuntu:
