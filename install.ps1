@@ -216,7 +216,7 @@ Write-Success 'Nix installed.'
 # 6. Apply Home Manager flake -----------------------------------------------
 Step-Header 6 'Applying the Home Manager flake'
 Write-Info ("Flake: {0}" -f $flakeRef)
-$hmCmd = "nix run home-manager -- switch --flake '{0}' --accept-flake-config" -f $flakeRef
+$hmCmd = "nix run --accept-flake-config home-manager -- switch --flake '{0}'" -f $flakeRef
 Invoke-WslDev -Distro $distroName -Script $hmCmd
 Write-Success 'Home Manager configuration applied.'
 
