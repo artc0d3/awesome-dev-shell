@@ -5,7 +5,7 @@
 {
   imports = [
     ./modules/ads-tools.nix
-    ./modules/claude.nix
+    ./modules/ai.nix
     ./modules/dev-tools.nix
     ./modules/neovim.nix
     ./modules/op-wsl.nix
@@ -19,7 +19,7 @@
   home.stateVersion = "26.05";
 
   ads.ads-tools.enable = true;
-  ads.claude.enable = true;
+  ads.ai.enable = true;
   ads.dev-tools.enable = true;
   ads.neovim-lazyvim.enable = true;
   ads.op-wsl.enable = true;
