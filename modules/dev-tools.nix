@@ -16,17 +16,9 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       cloc
-      (pkgs.writeShellScriptBin "devcontainer" ''
-        exec ${pkgs.devcontainer}/bin/devcontainer \
-          --docker-path ${pkgs.podman}/bin/podman \
-          "$@"
-      '')
       mise
       uv
     ];
-
-    # Make sure that devcontainers use podman
-    home.sessionVariables.DEVCONTAINER_DOCKER_PATH = "podman";
 
     programs.git = {
       enable = true;
