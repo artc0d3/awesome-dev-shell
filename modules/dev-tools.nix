@@ -21,6 +21,9 @@ in
       uv
     ];
 
+    # Make sure that devcontainers use podman
+    home.sessionVariables.DEVCONTAINER_DOCKER_PATH = "podman";
+
     programs.git = {
       enable = true;
       signing.format = null;
