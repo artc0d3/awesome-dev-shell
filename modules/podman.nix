@@ -21,6 +21,10 @@ in
     home.packages = [
       pkgs.podman
       pkgs.podman-compose
+      (pkgs.runCommand "podman-docker-symlink" { } ''
+        mkdir -p $out/bin
+        ln -s ${pkgs.podman}/bin/podman $out/bin/docker
+      '')
     ];
 
     xdg.configFile."containers/policy.json".text = builtins.toJSON {
