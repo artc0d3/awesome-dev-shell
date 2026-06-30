@@ -19,6 +19,7 @@ in
       jq
       ripgrep
       sd
+      unzip
     ];
 
     programs.zoxide = {
