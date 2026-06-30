@@ -16,7 +16,6 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       cloc
-      devcontainer
       mise
       uv
     ];
