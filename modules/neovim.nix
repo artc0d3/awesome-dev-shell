@@ -20,6 +20,7 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       neovim
+      lazygit
 
       # Treesitter parsers are compiled on the fly; they need a C compiler and make.
       gcc
@@ -29,7 +30,8 @@ in
       fd
       ripgrep
 
-      lazygit
+      # Unzip is required by Mason to install the LSP tooling
+      unzip
     ];
 
     # Clone the LazyVim starter into ~/.config/nvim the first time
