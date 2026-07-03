@@ -1,8 +1,16 @@
 # Linux-native OpenSSH agent and client.
 #
-# Runs ssh-agent as a persistent systemd user service. Once a passphrase-protected
-# key is unlocked with `ssh-add`, it stays available across all shells and to any
-# process launched from them (e.g. coding agents), until the next reboot.
+# keychain maintains a single long-lived ssh-agent per machine (persisted across
+# logins under ~/.keychain), and loads the configured keys into it. A passphrase is
+# entered once per reboot when the key is first unlocked; from then on the key stays
+# available to all shells — and any process launched from them, e.g. coding agents —
+# until the agent is killed. keychain runs from interactive shell init, so it does
+# not depend on the systemd --user manager (which is unreliable under WSL).
+#
+# Only the keys listed below are auto-loaded at login. The agent itself is not locked
+# down: extra keys can be added at runtime with `ssh-add`/`keychain <key>` (they live
+# until the agent dies, i.e. a `wsl --shutdown`). To auto-load a key on every boot,
+# add it here, or `keychain <key>` from ~/.zshrc.local (sourced in shell.nix).
 #
 # This module handles SSH transport (auth). Git SSH *commit signing* is configured
 # alongside git in dev-tools.nix, since it is git configuration.
@@ -20,17 +28,24 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Persistent user-level ssh-agent. Home Manager's ssh-agent module also exports
-    # SSH_AUTH_SOCK via shell init (~/.zshenv), so shells — and processes launched from
-    # them, e.g. coding agents — reach the agent. It is NOT set in the systemd user
-    # environment, so units started via `systemctl --user` won't inherit it.
-    services.ssh-agent.enable = true;
+    programs.keychain = {
+      enable = true;
+      # Key names are resolved under ~/.ssh (absolute paths also work). signing-key is
+      # the Git commit-signing key (see dev-tools.nix); it is served by the same agent.
+      keys = [
+        "id-key"
+        "signing-key"
+      ];
+      extraFlags = [
+        "--quiet"
+        "--nogui"
+      ];
+    };
 
     programs.ssh = {
       enable = true;
       enableDefaultConfig = false;
       settings."*" = {
-        # Cache the auth key in the agent on first use, for the rest of the session.
         AddKeysToAgent = "yes";
       };
     };
