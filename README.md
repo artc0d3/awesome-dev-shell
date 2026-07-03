@@ -53,7 +53,7 @@ Built on **Nix** with **Home Manager 25.11** managing the user environment on to
 ### Secrets & Git
 
 - **1Password CLI** — pull secrets straight from your vault (e.g. `op inject`).
-- **git** — sensible defaults, ready for a Linux-native SSH agent.
+- **git** — SSH authentication and commit signing via a Linux-native OpenSSH agent.
 
 ### AI
 
@@ -143,7 +143,39 @@ wsl -t ads
 wsl -d ads
 ```
 
-#### 5. Set up rootless Podman (optional)
+#### 5. Set up SSH keys (optional)
+
+Git authentication and commit signing use a **Linux-native OpenSSH agent** running as a
+persistent systemd user service. Store your passphrase-protected key(s) in `~/.ssh` and
+unlock them once per boot; the agent then serves them to every shell — and to automated
+tools such as coding agents — without further prompts.
+
+1. Place your key(s) in `~/.ssh`:
+   - **Authentication:** any conventional key, e.g. `~/.ssh/id_ed25519`.
+   - **Commit signing:** ADS expects the signing key at `~/.ssh/signing-key` (public half
+     `~/.ssh/signing-key.pub`). It may be the same key as your auth key or a separate one.
+
+2. After each WSL boot, load the key(s) into the agent once:
+
+   ```bash
+   ssh-add ~/.ssh/id_ed25519 ~/.ssh/signing-key
+   ssh-add -l   # verify the keys are loaded
+   ```
+
+   You'll be prompted for each passphrase once; the keys then stay unlocked in the agent
+   until the next reboot. Your **auth** key is also loaded lazily by `AddKeysToAgent yes`
+   the first time you use Git over SSH — but the **signing** key must be added explicitly,
+   because commit signing does not auto-add keys.
+
+3. (Optional) To verify signatures locally (`git log --show-signature`), create an
+   allowed-signers file mapping your email to your public signing key:
+
+   ```bash
+   echo "your.email@example.com $(cat ~/.ssh/signing-key.pub)" >> ~/.ssh/allowed_signers
+   git config --global gpg.ssh.allowedSignersFile ~/.ssh/allowed_signers
+   ```
+
+#### 6. Set up rootless Podman (optional)
 
 Podman is installed by Home Manager, but rootless containers need a small amount of system-level
 setup on Ubuntu:
