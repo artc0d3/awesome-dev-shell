@@ -24,7 +24,6 @@
   ads.neovim-lazyvim.enable = true;
   ads.op-wsl.enable = true;
   ads.podman.enable = true;
-  ads.op-wsl.sshAgent.enable = true;
   ads.shell.enable = true;
   ads.shell-tools.enable = true;
 }

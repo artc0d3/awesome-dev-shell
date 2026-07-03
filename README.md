@@ -12,7 +12,7 @@ Linux shell on Windows without becoming part-time sysadmins.
 - **Fast & modern CLI** — zsh + starship + the full `eza`/`bat`/`fd`/`ripgrep` lineup out of the box.
 - **Polyglot runtimes** — `vfox` for Node/Java/Go/Python versions, `uv` for Python projects.
 - **Containers ready** — podman with Docker compatibility.
-- **1Password-native** — secrets and SSH keys flow in from your Windows vault automatically.
+- **1Password-native** — secrets flow in from your Windows vault via the 1Password CLI.
 - **AI on tap** — `claude-code` pre-installed for pair-programming from the terminal.
 
 ## Loadout
@@ -52,8 +52,8 @@ Built on **Nix** with **Home Manager 25.11** managing the user environment on to
 
 ### Secrets & Git
 
-- **1Password CLI** — pull secrets and SSH keys straight from your vault.
-- **git** — wired up to use the 1Password SSH agent via npiperelay bridge.
+- **1Password CLI** — pull secrets straight from your vault (e.g. `op inject`).
+- **git** — sensible defaults, ready for a Linux-native SSH agent.
 
 ### AI
 
@@ -143,33 +143,7 @@ wsl -t ads
 wsl -d ads
 ```
 
-#### 5. Set up 1Password SSH agent (optional)
-
-The setup forwards SSH requests from WSL to the 1Password SSH agent running on Windows, so you can
-authenticate with SSH keys stored in 1Password without managing separate keys.
-
-**On Windows:**
-
-1. Install the 1Password desktop app and sign in.
-2. Enable the SSH agent in 1Password: **Settings > Developer > SSH Agent**.
-3. Install [npiperelay](https://github.com/jstarks/npiperelay) — needed to bridge the Windows
-   named pipe to a Unix socket:
-
-   ```powershell
-   winget install --id=Jstarks.Npiperelay
-   ```
-
-   Restart your terminal after installation so `npiperelay.exe` is on your PATH.
-
-**Back in WSL:**
-
-The SSH agent bridge runs as a user-level systemd service (started automatically). Check its status:
-
-```bash
-systemctl --user status ssh-agent-bridge
-```
-
-#### 6. Set up rootless Podman (optional)
+#### 5. Set up rootless Podman (optional)
 
 Podman is installed by Home Manager, but rootless containers need a small amount of system-level
 setup on Ubuntu:

@@ -8,8 +8,7 @@
     Automates every step described in README.md: creates a named Ubuntu WSL
     distribution, provisions the `dev` user with passwordless sudo, installs
     Nix via the Determinate Systems installer, applies the Home Manager flake,
-    sets zsh as the login shell, and optionally installs npiperelay for the
-    1Password SSH-agent bridge.
+    and sets zsh as the login shell.
 
 .EXAMPLE
     .\install.ps1
@@ -126,33 +125,17 @@ if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
 }
 Write-Success 'WSL is available.'
 
-$npiperelayInstalled = [bool](Get-Command npiperelay.exe -ErrorAction SilentlyContinue)
-$scoopAvailable      = [bool](Get-Command scoop          -ErrorAction SilentlyContinue)
-$wingetAvailable     = [bool](Get-Command winget.exe     -ErrorAction SilentlyContinue)
-
-if ($npiperelayInstalled) {
-    Write-Success 'npiperelay is already on PATH - installation will be skipped.'
-} elseif ($scoopAvailable) {
-    Write-Success 'scoop is available - it will be used to install npiperelay.'
-} elseif ($wingetAvailable) {
-    Write-Success 'winget is available - it will be used to install npiperelay (scoop not found).'
-} else {
-    Write-Warn 'Neither scoop nor winget is available - optional npiperelay step will be skipped.'
-}
-
 # Gather user input ---------------------------------------------------------
 Write-Section 'Configuration'
 
 $distroName    = Read-WithDefault -Prompt 'WSL distribution name' -Default 'ads'
 $makeDefault   = Read-YesNo       -Prompt 'Make this distribution the default WSL distribution?' -Default $true
-$setupSshAgent = Read-YesNo       -Prompt 'Set up 1Password SSH-agent forwarding (installs npiperelay)?' -Default $true
 $version       = Read-WithDefault -Prompt 'Version to install (Git branch or tag)' -Default 'main'
 $flakeRef      = $script:FlakeTemplate -f $version
 
 Write-Host ''
 Write-Info ("Distribution name      : {0}" -f $distroName)
 Write-Info ("Make default WSL distro: {0}" -f $makeDefault)
-Write-Info ("SSH-agent forwarding   : {0}" -f $setupSshAgent)
 Write-Info ("Version                : {0}" -f $version)
 Write-Info ("Flake reference        : {0}" -f $flakeRef)
 Write-Host ''
@@ -166,7 +149,7 @@ if (Test-DistroExists -Distro $distroName) {
     exit 1
 }
 
-$totalSteps = 9
+$totalSteps = 8
 function Step-Header {
     param([int]$N, [string]$Title)
     Write-Section ("[{0}/{1}] {2}" -f $N, $totalSteps, $Title)
@@ -236,39 +219,8 @@ chsh -s \$(which zsh)
 Invoke-WslDev -Distro $distroName -Script $zshSetup
 Write-Success 'Default shell set to zsh.'
 
-# 8. SSH-agent forwarding ---------------------------------------------------
-if ($setupSshAgent) {
-    Step-Header 8 'Installing npiperelay for 1Password SSH-agent forwarding'
-    if ($npiperelayInstalled) {
-        Write-Success 'npiperelay is already on PATH - nothing to install.'
-    } elseif ($scoopAvailable) {
-        Write-Step 'scoop install npiperelay'
-        & scoop install npiperelay
-        if ($LASTEXITCODE -eq 0) {
-            Write-Success 'npiperelay installed via scoop.'
-        } else {
-            Write-Warn ("scoop exited {0}. If npiperelay is already installed this is harmless; otherwise install manually." -f $LASTEXITCODE)
-        }
-    } elseif ($wingetAvailable) {
-        Write-Step 'winget install Jstarks.Npiperelay'
-        & winget.exe install --id=Jstarks.Npiperelay --accept-package-agreements --accept-source-agreements --silent
-        # winget returns non-zero when the package is already installed; treat that as OK.
-        if ($LASTEXITCODE -eq 0) {
-            Write-Success 'npiperelay installed via winget.'
-        } else {
-            Write-Warn ("winget exited {0}. If npiperelay is already installed this is harmless; otherwise install manually." -f $LASTEXITCODE)
-        }
-    } else {
-        Write-Warn 'Neither scoop nor winget is available. Install npiperelay manually: https://github.com/jstarks/npiperelay'
-    }
-    Write-Info 'Remember to enable the agent: 1Password > Settings > Developer > SSH Agent.'
-} else {
-    Step-Header 8 'Skipping SSH-agent forwarding setup'
-    Write-Info 'Skipped on request.'
-}
-
-# 9. Finalize ---------------------------------------------------------------
-Step-Header 9 'Finalizing'
+# 8. Finalize ---------------------------------------------------------------
+Step-Header 8 'Finalizing'
 if ($makeDefault) {
     Write-Step ("Setting '{0}' as the default WSL distribution" -f $distroName)
     & wsl.exe --set-default $distroName
