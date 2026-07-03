@@ -17,7 +17,7 @@ Linux shell on Windows without becoming part-time sysadmins.
 
 ## Loadout
 
-Built on **Nix** with **Home Manager 25.11** managing the user environment on top of Ubuntu-WSL.
+Built on **Nix** with **Home Manager 26.05** managing the user environment on top of Ubuntu-WSL.
 
 ### Shell & prompt
 
@@ -147,8 +147,13 @@ wsl -d ads
 
 Git authentication and commit signing use a **Linux-native OpenSSH agent** running as a
 persistent systemd user service. Store your passphrase-protected key(s) in `~/.ssh` and
-unlock them once per boot; the agent then serves them to every shell — and to automated
-tools such as coding agents — without further prompts.
+unlock them once per boot; the agent then serves them to every shell — and to any tool
+launched from a shell, such as a coding agent — without further prompts.
+
+> **Note:** `SSH_AUTH_SOCK` is exported through your shell init (`~/.zshenv`), so tools
+> reach the agent when launched from a shell (the usual case). A process started *outside*
+> a shell — directly via `systemctl --user`, a desktop entry, or a headless/cron context —
+> will not inherit the socket.
 
 1. Place your key(s) in `~/.ssh`:
    - **Authentication:** any conventional key, e.g. `~/.ssh/id_ed25519`.

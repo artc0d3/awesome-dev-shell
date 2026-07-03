@@ -20,8 +20,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    # Persistent user-level ssh-agent. Also exports SSH_AUTH_SOCK as a session
-    # variable so interactive shells and their child processes inherit it.
+    # Persistent user-level ssh-agent. Home Manager's ssh-agent module also exports
+    # SSH_AUTH_SOCK via shell init (~/.zshenv), so shells — and processes launched from
+    # them, e.g. coding agents — reach the agent. It is NOT set in the systemd user
+    # environment, so units started via `systemctl --user` won't inherit it.
     services.ssh-agent.enable = true;
 
     programs.ssh = {

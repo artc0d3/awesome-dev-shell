@@ -24,7 +24,8 @@ in
       enable = true;
       signing = {
         # SSH-based commit signing; the private key is served by the ssh-agent
-        # (see modules/ssh.nix). The signing key is expected at ~/.ssh/signing-key.
+        # (see modules/ssh.nix). Expects the private signing key at ~/.ssh/signing-key
+        # (public half ~/.ssh/signing-key.pub).
         format = "ssh";
         key = "~/.ssh/signing-key.pub";
         signByDefault = true;
