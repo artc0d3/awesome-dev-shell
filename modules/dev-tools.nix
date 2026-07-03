@@ -22,7 +22,13 @@ in
 
     programs.git = {
       enable = true;
-      signing.format = null;
+      signing = {
+        # SSH-based commit signing; the private key is served by the ssh-agent
+        # (see modules/ssh.nix). The signing key is expected at ~/.ssh/signing-key.
+        format = "ssh";
+        key = "~/.ssh/signing-key.pub";
+        signByDefault = true;
+      };
     };
   };
 }
