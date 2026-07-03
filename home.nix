@@ -12,6 +12,7 @@
     ./modules/podman.nix
     ./modules/shell.nix
     ./modules/shell-tools.nix
+    ./modules/ssh.nix
   ];
 
   home.username = username;
@@ -26,4 +27,5 @@
   ads.podman.enable = true;
   ads.shell.enable = true;
   ads.shell-tools.enable = true;
+  ads.ssh.enable = true;
 }
