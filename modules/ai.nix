@@ -29,11 +29,10 @@ in
 
     home.sessionPath = [ "${npmPrefix}/bin" ];
 
-    home.activation.installPiCodingAgent =
-      lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        export PATH="${pkgs.nodejs_24}/bin:$PATH"
-        export NPM_CONFIG_PREFIX="${npmPrefix}"
-        run npm install -g --ignore-scripts @earendil-works/pi-coding-agent
-      '';
+    home.activation.installPiCodingAgent = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      export PATH="${pkgs.nodejs_24}/bin:$PATH"
+      export NPM_CONFIG_PREFIX="${npmPrefix}"
+      run npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+    '';
   };
 }
