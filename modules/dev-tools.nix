@@ -30,7 +30,7 @@ in
         key = "~/.ssh/signing-key.pub";
         signByDefault = true;
       };
-      extraConfig = {
+      settings = {
         # The file itself is not managed here — populate ~/.config/git/allowed_signers manually with `<email> <contents of
         # signing-key.pub>` to enable local verification. Until then, verification reports "no signature could be checked", but signing itself is unaffected.
         gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.config/git/allowed_signers";
