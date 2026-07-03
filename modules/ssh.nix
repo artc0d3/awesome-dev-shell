@@ -28,6 +28,7 @@ in
 
     programs.ssh = {
       enable = true;
+      enableDefaultConfig = false;
       settings."*" = {
         # Cache the auth key in the agent on first use, for the rest of the session.
         AddKeysToAgent = "yes";
