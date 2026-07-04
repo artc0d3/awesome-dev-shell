@@ -1,7 +1,7 @@
 {
-  "extends": "always-further/claude",
+  "extends": "always-further/pi",
   "meta": {
-    "name": "yolo-claude"
+    "name": "yolo-pi"
   },
   "workdir": {
     "access": "readwrite"
@@ -9,6 +9,7 @@
   "filesystem": {
     "allow": [
       "/tmp",
+      "~/.npm-global/bin",
       "~/.cache/mise",
       "~/.local/state/mise",
       "~/.local/share/mise"
