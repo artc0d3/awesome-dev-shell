@@ -20,6 +20,17 @@ in
       uv
     ];
 
+    # Seed an empty, user-editable ~/.gitconfig on install if one does not exist.
+    #
+    # Home Manager renders ~/.config/git/config as an immutable Nix-store symlink.
+    # If ~/.gitconfig doesn't exist, `git config` commands try to modify ~/.config/git/config which
+    # fails, because of immutability. Creating .gitconfig allows user to provide their local config.
+    home.activation.seedGitConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ ! -e "${config.home.homeDirectory}/.gitconfig" ]; then
+        run touch "${config.home.homeDirectory}/.gitconfig"
+      fi
+    '';
+
     programs.git = {
       enable = true;
       signing = {
