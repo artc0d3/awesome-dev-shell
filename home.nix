@@ -21,7 +21,8 @@
 
   ads.ads-tools.enable = true;
   ads.ai.enable = true;
-  ads.ai.piPackages = [
+  ads.ai.pi.version = "0.80.2";
+  ads.ai.pi.packages = [
     "npm:pi-subagents"
     "npm:pi-web-access"
     "npm:pi-mcp-adapter"

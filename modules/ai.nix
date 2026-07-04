@@ -13,24 +13,37 @@ in
   options.ads.ai = {
     enable = lib.mkEnableOption "Coding agents";
 
-    piPackages = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
-      default = [ ];
-      example = [
-        "npm:pi-subagents"
-        "git:github.com/user/repo@v1"
-      ];
-      description = ''
-        Pi coding agent packages to install declaratively. Each entry is a Pi
-        package source string as accepted by `pi install`
-        (e.g. "npm:pi-subagents", "git:github.com/user/repo@v1", or an absolute
-        path). They are installed during Home Manager activation via
-        `pi install`, which is idempotent and records them in
-        ~/.pi/agent/settings.json.
+    pi = {
+      version = lib.mkOption {
+        type = lib.types.str;
+        default = "0.80.2";
+        example = "0.80.3";
+        description = ''
+          Exact version of the Pi coding agent (npm package
+          @earendil-works/pi-coding-agent) to install. Pinned for
+          reproducibility; bump this to upgrade.
+        '';
+      };
 
-        Note: removing an entry here does NOT uninstall the package — run
-        `pi remove <source>` for that.
-      '';
+      packages = lib.mkOption {
+        type = lib.types.listOf lib.types.str;
+        default = [ ];
+        example = [
+          "npm:pi-subagents"
+          "git:github.com/user/repo@v1"
+        ];
+        description = ''
+          Pi coding agent packages to install declaratively. Each entry is a Pi
+          package source string as accepted by `pi install`
+          (e.g. "npm:pi-subagents", "git:github.com/user/repo@v1", or an
+          absolute path). They are installed during Home Manager activation via
+          `pi install`, which is idempotent and records them in
+          ~/.pi/agent/settings.json.
+
+          Note: removing an entry here does NOT uninstall the package — run
+          `pi remove <source>` for that.
+        '';
+      };
     };
   };
 
@@ -64,17 +77,17 @@ in
     home.activation.installPiCodingAgent = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       export PATH="${pkgs.nodejs_24}/bin:$PATH"
       export NPM_CONFIG_PREFIX="${npmPrefix}"
-      run npm install -g --ignore-scripts @earendil-works/pi-coding-agent
+      run npm install -g --ignore-scripts @earendil-works/pi-coding-agent@${cfg.pi.version}
     '';
 
     # Install declared Pi packages
-    home.activation.installPiPackages = lib.mkIf (cfg.piPackages != [ ]) (
+    home.activation.installPiPackages = lib.mkIf (cfg.pi.packages != [ ]) (
       lib.hm.dag.entryAfter [ "installPiCodingAgent" ] ''
         # git is needed for `git:` package sources; the activation PATH is
         # minimal, so add it explicitly rather than relying on the login shell.
         export PATH="${pkgs.nodejs_24}/bin:${npmPrefix}/bin:${pkgs.git}/bin:$PATH"
         export NPM_CONFIG_PREFIX="${npmPrefix}"
-        ${lib.concatMapStringsSep "\n" (p: "run pi install ${lib.escapeShellArg p}") cfg.piPackages}
+        ${lib.concatMapStringsSep "\n" (p: "run pi install ${lib.escapeShellArg p}") cfg.pi.packages}
       ''
     );
   };
