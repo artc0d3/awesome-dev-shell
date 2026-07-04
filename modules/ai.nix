@@ -90,5 +90,13 @@ in
         ${lib.concatMapStringsSep "\n" (p: "run pi install ${lib.escapeShellArg p}") cfg.pi.packages}
       ''
     );
+
+    # Pull the shared Nono profiles. The activation PATH is minimal, so add
+    # nono explicitly rather than relying on the login shell.
+    home.activation.pullNonoProfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      export PATH="${pkgs.nono}/bin:$PATH"
+      run nono pull always-further/pi
+      run nono pull always-further/claude
+    '';
   };
 }
