@@ -21,6 +21,13 @@
 
   ads.ads-tools.enable = true;
   ads.ai.enable = true;
+  ads.ai.piPackages = [
+    "npm:pi-subagents"
+    "npm:pi-web-access"
+    "npm:pi-mcp-adapter"
+    "npm:@tmustier/pi-usage-extension"
+    "git:github.com/DietrichGebert/ponytail@v4.8.4"
+  ];
   ads.dev-tools.enable = true;
   ads.neovim-lazyvim.enable = true;
   ads.op-wsl.enable = true;

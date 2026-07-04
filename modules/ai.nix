@@ -12,6 +12,26 @@ in
 {
   options.ads.ai = {
     enable = lib.mkEnableOption "Coding agents";
+
+    piPackages = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = [
+        "npm:pi-subagents"
+        "git:github.com/user/repo@v1"
+      ];
+      description = ''
+        Pi coding agent packages to install declaratively. Each entry is a Pi
+        package source string as accepted by `pi install`
+        (e.g. "npm:pi-subagents", "git:github.com/user/repo@v1", or an absolute
+        path). They are installed during Home Manager activation via
+        `pi install`, which is idempotent and records them in
+        ~/.pi/agent/settings.json.
+
+        Note: removing an entry here does NOT uninstall the package — run
+        `pi remove <source>` for that.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -46,5 +66,14 @@ in
       export NPM_CONFIG_PREFIX="${npmPrefix}"
       run npm install -g --ignore-scripts @earendil-works/pi-coding-agent
     '';
+
+    # Install declared Pi packages
+    home.activation.installPiPackages = lib.mkIf (cfg.piPackages != [ ]) (
+      lib.hm.dag.entryAfter [ "installPiCodingAgent" ] ''
+        export PATH="${pkgs.nodejs_24}/bin:${npmPrefix}/bin:$PATH"
+        export NPM_CONFIG_PREFIX="${npmPrefix}"
+        ${lib.concatMapStringsSep "\n" (p: "run pi install ${lib.escapeShellArg p}") cfg.piPackages}
+      ''
+    );
   };
 }
