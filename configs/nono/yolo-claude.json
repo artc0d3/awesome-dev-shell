@@ -12,5 +12,10 @@
       "~/.local/state/mise",
       "~/.local/share/mise"
     ]
+  },
+  "environment": {
+    "set_vars": {
+      "TMPDIR": "/tmp/claude-1000"
+    }
   }
 }
