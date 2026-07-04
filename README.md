@@ -10,10 +10,10 @@ Linux shell on Windows without becoming part-time sysadmins.
 
 - **Reproducible** — one Nix flake describes the whole setup; rebuild it anywhere, get the same shell.
 - **Fast & modern CLI** — zsh + starship + the full `eza`/`bat`/`fd`/`ripgrep` lineup out of the box.
-- **Polyglot runtimes** — `vfox` for Node/Java/Go/Python versions, `uv` for Python projects.
+- **Polyglot runtimes** — `mise` for Node/Java/Go/Python versions, `uv` for Python projects.
 - **Containers ready** — podman with Docker compatibility.
-- **1Password-native** — secrets flow in from your Windows vault via the 1Password CLI.
-- **AI on tap** — `claude-code` pre-installed for pair-programming from the terminal.
+- **1Password client** — tweaked 1Password client that can run `op run` commands without issues.
+- **AI on tap** — `claude-code` and `pi` pre-installed for pair-programming from the terminal.
 
 ## Loadout
 
@@ -66,6 +66,7 @@ customize) each step, the manual walkthrough further down covers the same ground
 
 ### Installation
 
+### Setup the WSL instance
 Make sure WSL2 is installed and enabled on Windows, then run from an elevated PowerShell prompt:
 
 ```powershell
@@ -75,11 +76,9 @@ irm https://raw.githubusercontent.com/artc0d3/awesome-dev-shell/main/install.ps1
 When it finishes, launch your new shell with `wsl -d <distro-name>` (or just `wsl` if you set it as
 the default).
 
-### Configuration
-
 That are few manual steps that you might want to perform just after the installation.
 
-#### Set up SSH keys
+### Set up SSH keys
 
 Git authentication and commit signing use a **Linux-native OpenSSH agent** running as a
 persistent systemd user service. Store your passphrase-protected key(s) in `~/.ssh` and
@@ -106,7 +105,7 @@ launched from a shell, such as a coding agent — without further prompts.
    echo "your.email@example.com $(cat ~/.ssh/signing-key.pub)" >> ~/.config/git/allowed_signers
    ```
 
-#### Setup Git identity
+### Setup Git identity
 
 You can setup your global Git identity via the following commands:
 
