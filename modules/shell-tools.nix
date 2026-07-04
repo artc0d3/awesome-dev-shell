@@ -24,7 +24,6 @@ in
 
     programs.zoxide = {
       enable = true;
-      options = [ "--cmd cd" ];
     };
 
     programs.bat.enable = true;

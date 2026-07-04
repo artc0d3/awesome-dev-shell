@@ -10,14 +10,14 @@ Linux shell on Windows without becoming part-time sysadmins.
 
 - **Reproducible** — one Nix flake describes the whole setup; rebuild it anywhere, get the same shell.
 - **Fast & modern CLI** — zsh + starship + the full `eza`/`bat`/`fd`/`ripgrep` lineup out of the box.
-- **Polyglot runtimes** — `vfox` for Node/Java/Go/Python versions, `uv` for Python projects.
+- **Polyglot runtimes** — `mise` for Node/Java/Go/Python versions, `uv` for Python projects.
 - **Containers ready** — podman with Docker compatibility.
-- **1Password-native** — secrets and SSH keys flow in from your Windows vault automatically.
-- **AI on tap** — `claude-code` pre-installed for pair-programming from the terminal.
+- **1Password client** — tweaked 1Password client that can run `op run` commands without issues.
+- **AI on tap** — `claude-code` and `pi` pre-installed for pair-programming from the terminal.
 
 ## Loadout
 
-Built on **Nix** with **Home Manager 25.11** managing the user environment on top of Ubuntu-WSL.
+Built on **Nix** with **Home Manager 26.05** managing the user environment on top of Ubuntu-WSL.
 
 ### Shell & prompt
 
@@ -52,8 +52,8 @@ Built on **Nix** with **Home Manager 25.11** managing the user environment on to
 
 ### Secrets & Git
 
-- **1Password CLI** — pull secrets and SSH keys straight from your vault.
-- **git** — wired up to use the 1Password SSH agent via npiperelay bridge.
+- **1Password CLI** — pull secrets straight from your vault (e.g. `op inject`).
+- **git** — SSH authentication and commit signing via a Linux-native OpenSSH agent.
 
 ### AI
 
@@ -64,8 +64,9 @@ Built on **Nix** with **Home Manager 25.11** managing the user environment on to
 The fastest way to get up and running is the bundled PowerShell installer. If you'd rather see (or
 customize) each step, the manual walkthrough further down covers the same ground.
 
-### Quick install (recommended)
+### Installation
 
+### Setup the WSL instance
 Make sure WSL2 is installed and enabled on Windows, then run from an elevated PowerShell prompt:
 
 ```powershell
@@ -75,117 +76,45 @@ irm https://raw.githubusercontent.com/artc0d3/awesome-dev-shell/main/install.ps1
 When it finishes, launch your new shell with `wsl -d <distro-name>` (or just `wsl` if you set it as
 the default).
 
-### Manual installation
+That are few manual steps that you might want to perform just after the installation.
 
-#### 1. Create the Ubuntu WSL instance
+### Set up SSH keys
 
-Make sure WSL2 is installed and enabled on your Windows machine. Open PowerShell and create a fresh instance:
+Git authentication and commit signing use a **Linux-native OpenSSH agent** running as a
+persistent systemd user service. Store your passphrase-protected key(s) in `~/.ssh` and
+unlock them once per boot; the agent then serves them to every shell — and to any tool
+launched from a shell, such as a coding agent — without further prompts.
 
-```powershell
-wsl --install Ubuntu --name ads
-```
+1. Place your key(s) in `~/.ssh`:
+   - **Authentication:** Authentication key used to sign-in into Git repositories. Expected at location `~/.ssh/id-key` (public half `~/.ssh/signing-key.pub`).
+   - **Commit signing:** Key used to sign your commits. Expected at location `~/.ssh/signing-key` (public half `~/.ssh/signing-key.pub`).
 
-This downloads and creates an Ubuntu instance. You'll be prompted to create a Unix username and password.
-Use `dev` as the username to match the default configuration (or change the username in `flake.nix`).
+2. After each WSL boot, you will be prompted for every key passphrase. After unlocking, the keys will be available in the SSH agent without any further manual input.
 
-Update the Ubuntu packages:
+3. To verify Git commit signatures locally (`git log --show-signature`, `git verify-commit`), populate the **allowed-signers file** located in `~/.config/git/allowed_signers`.
+   Each line maps one or more principals (emails) to a public key. The key portion is exactly the contents of your `~/.ssh/signing-key.pub`. A sample line looks like:
 
-```bash
-sudo apt update
-sudo apt upgrade
-```
-
-#### 2. Install the Nix package manager
-
-We use the [Determinate Nix Installer](https://github.com/DeterminateSystems/nix-installer)
-which enables flakes and the `nix` command out of the box:
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sh -s -- install
-```
-
-Close and reopen your terminal so that `nix` is on your PATH:
-
-```bash
-exit
-wsl -d ads
-```
-
-Verify the installation:
-
-```bash
-nix --version
-```
-
-#### 3. Apply Awesome Dev Shell
-
-Run Home Manager with the flake:
-
-```bash
-nix run home-manager -- switch --flake "github:artc0d3/awesome-dev-shell?ref=main#wsl"
-```
-
-This installs all packages and writes all configuration files. On the first run it may take a few
-minutes to download and build everything.
-
-#### 4. Set zsh as default shell
-
-```bash
-echo $(which zsh) | sudo tee -a /etc/shells
-chsh -s $(which zsh)
-```
-
-Log out and and restart WSL instance for the changes to take effect:
-
-```bash
-exit
-wsl -t ads
-wsl -d ads
-```
-
-#### 5. Set up 1Password SSH agent (optional)
-
-The setup forwards SSH requests from WSL to the 1Password SSH agent running on Windows, so you can
-authenticate with SSH keys stored in 1Password without managing separate keys.
-
-**On Windows:**
-
-1. Install the 1Password desktop app and sign in.
-2. Enable the SSH agent in 1Password: **Settings > Developer > SSH Agent**.
-3. Install [npiperelay](https://github.com/jstarks/npiperelay) — needed to bridge the Windows
-   named pipe to a Unix socket:
-
-   ```powershell
-   winget install --id=Jstarks.Npiperelay
+   ```
+   your.email@example.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your@host
    ```
 
-   Restart your terminal after installation so `npiperelay.exe` is on your PATH.
+   The quickest way to add your own entry:
 
-**Back in WSL:**
+   ```bash
+   mkdir -p ~/.config/git
+   echo "your.email@example.com $(cat ~/.ssh/signing-key.pub)" >> ~/.config/git/allowed_signers
+   ```
 
-The SSH agent bridge runs as a user-level systemd service (started automatically). Check its status:
+### Setup Git identity
 
-```bash
-systemctl --user status ssh-agent-bridge
-```
-
-#### 6. Set up rootless Podman (optional)
-
-Podman is installed by Home Manager, but rootless containers need a small amount of system-level
-setup on Ubuntu:
+You can setup your global Git identity via the following commands:
 
 ```bash
-sudo apt update
-sudo apt install uidmap slirp4netns
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
 ```
 
-Verify:
-
-```bash
-podman run --rm docker.io/library/hello-world
-```
-
-## Rebuilding after changes
+## Updating
 
 If you've cloned the repo locally and made changes:
 

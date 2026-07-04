@@ -1,0 +1,20 @@
+{
+  "extends": "always-further/pi",
+  "meta": {
+    "name": "yolo-pi"
+  },
+  "workdir": {
+    "access": "readwrite"
+  },
+  "filesystem": {
+    "read": [
+      "~/.npm-global"
+    ],
+    "allow": [
+      "/tmp",
+      "~/.cache/mise",
+      "~/.local/state/mise",
+      "~/.local/share/mise"
+    ]
+  }
+}
