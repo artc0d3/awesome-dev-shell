@@ -70,7 +70,9 @@ in
     # Install declared Pi packages
     home.activation.installPiPackages = lib.mkIf (cfg.piPackages != [ ]) (
       lib.hm.dag.entryAfter [ "installPiCodingAgent" ] ''
-        export PATH="${pkgs.nodejs_24}/bin:${npmPrefix}/bin:$PATH"
+        # git is needed for `git:` package sources; the activation PATH is
+        # minimal, so add it explicitly rather than relying on the login shell.
+        export PATH="${pkgs.nodejs_24}/bin:${npmPrefix}/bin:${pkgs.git}/bin:$PATH"
         export NPM_CONFIG_PREFIX="${npmPrefix}"
         ${lib.concatMapStringsSep "\n" (p: "run pi install ${lib.escapeShellArg p}") cfg.piPackages}
       ''
