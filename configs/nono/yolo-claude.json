@@ -1,0 +1,16 @@
+{
+  "extends": "always-further/claude",
+  "meta": {
+    "name": "yolo-claude"
+  },
+  "workdir": {
+    "access": "readwrite"
+  },
+  "filesystem": {
+    "allow": [
+      "~/.cache/mise",
+      "~/.local/state/mise",
+      "~/.local/share/mise"
+    ]
+  }
+}

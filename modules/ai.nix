@@ -29,6 +29,13 @@ in
 
     home.sessionPath = [ "${npmPrefix}/bin" ];
 
+    # Nono sandbox profiles for coding agents
+    xdg.configFile."nono/profiles/yolo-claude.json".source = ../configs/nono/yolo-claude.json;
+
+    # Aliases for launching agents in yolo mode
+    programs.zsh.shellAliases.yoloclaude =
+      "nono run --profile yolo-claude -- claude --dangerously-skip-permissions";
+
     home.activation.installPiCodingAgent = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       export PATH="${pkgs.nodejs_24}/bin:$PATH"
       export NPM_CONFIG_PREFIX="${npmPrefix}"
