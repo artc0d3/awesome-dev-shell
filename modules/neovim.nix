@@ -34,13 +34,26 @@ in
       unzip
     ];
 
-    # Clone the LazyVim starter into ~/.config/nvim the first time
-    # home-manager activates.  Subsequent activations are a no-op so
-    # user modifications are preserved.
+    # Managed plugin: symlinked from the Nix store so it stays in sync with the repo.
+    # The lua/plugins/ directory is a regular mutable directory — users can freely add
+    # other plugin files alongside this one.
+    home.file.".config/nvim/lua/plugins/smart-splits.lua" = {
+      source = ../configs/nvim/plugins/smart-splits.lua;
+    };
+
+    # Clone the LazyVim starter into ~/.config/nvim the first time home-manager activates.
+    # Checks for init.lua rather than the directory itself, because home.file may have
+    # pre-created ~/.config/nvim/lua/plugins/ before this activation runs.
+    # Uses a temp dir so the clone doesn't fail on a non-empty target directory.
+    # Subsequent activations are a no-op so user modifications are preserved.
     home.activation.bootstrapLazyVim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      if [ ! -d "${config.home.homeDirectory}/.config/nvim" ]; then
-        run ${pkgs.git}/bin/git clone https://github.com/LazyVim/starter "${config.home.homeDirectory}/.config/nvim"
-        run ${pkgs.coreutils}/bin/rm -rf "${config.home.homeDirectory}/.config/nvim/.git"
+      nvim_config="${config.home.homeDirectory}/.config/nvim"
+      if [ ! -f "$nvim_config/init.lua" ]; then
+        tmp=$(${pkgs.coreutils}/bin/mktemp -d)
+        run ${pkgs.git}/bin/git clone https://github.com/LazyVim/starter "$tmp/starter"
+        run ${pkgs.coreutils}/bin/rm -rf "$tmp/starter/.git"
+        run ${pkgs.coreutils}/bin/cp -rn "$tmp/starter/." "$nvim_config/"
+        run ${pkgs.coreutils}/bin/rm -rf "$tmp"
       fi
     '';
   };

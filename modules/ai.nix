@@ -69,10 +69,8 @@ in
     # Aliases for launching agents in yolo mode.
     # TMPDIR is set on the parent env rather than in the profile: nono inherits
     # all env vars by default.
-    programs.zsh.shellAliases.yoloclaude =
-      "TMPDIR=/tmp/claude-1000 nono run --profile yolo-claude -- claude --dangerously-skip-permissions";
-    programs.zsh.shellAliases.yolopi =
-      "TMPDIR=/tmp/pi nono run --profile yolo-pi -- pi";
+    programs.zsh.shellAliases.yoloclaude = "TMPDIR=/tmp/claude-1000 nono run --profile yolo-claude -- claude --dangerously-skip-permissions";
+    programs.zsh.shellAliases.yolopi = "TMPDIR=/tmp/pi nono run --profile yolo-pi -- pi";
 
     home.activation.installPiCodingAgent = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       export PATH="${pkgs.nodejs_24}/bin:$PATH"
