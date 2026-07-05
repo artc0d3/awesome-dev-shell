@@ -41,6 +41,10 @@ in
       source = ../configs/nvim/plugins/smart-splits.lua;
     };
 
+    home.file.".config/nvim/lua/plugins/diffview.lua" = {
+      source = ../configs/nvim/plugins/diffview.lua;
+    };
+
     # Clone the LazyVim starter into ~/.config/nvim the first time home-manager activates.
     # Checks for init.lua rather than the directory itself, because home.file may have
     # pre-created ~/.config/nvim/lua/plugins/ before this activation runs.
