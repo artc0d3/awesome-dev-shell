@@ -13,6 +13,7 @@
     ./modules/shell.nix
     ./modules/shell-tools.nix
     ./modules/ssh.nix
+    ./modules/tmux.nix
   ];
 
   home.username = username;
@@ -36,4 +37,5 @@
   ads.shell.enable = true;
   ads.shell-tools.enable = true;
   ads.ssh.enable = true;
+  ads.tmux.enable = true;
 }
