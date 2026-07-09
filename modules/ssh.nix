@@ -1,11 +1,12 @@
-# Linux-native OpenSSH agent and client.
+# Cross-platform OpenSSH agent and client (Linux and macOS).
 #
 # keychain maintains a single long-lived ssh-agent per machine (persisted across
 # logins under ~/.keychain), and loads the configured keys into it. A passphrase is
 # entered once per reboot when the key is first unlocked; from then on the key stays
 # available to all shells — and any process launched from them, e.g. coding agents —
 # until the agent is killed. keychain runs from interactive shell init, so it does
-# not depend on the systemd --user manager (which is unreliable under WSL).
+# not depend on the systemd --user manager (unreliable under WSL) or any macOS
+# launch daemon — it works identically on both platforms.
 #
 # Only the keys listed below are auto-loaded at login. The agent itself is not locked
 # down: extra keys can be added at runtime with `ssh-add`/`keychain <key>` (they live
