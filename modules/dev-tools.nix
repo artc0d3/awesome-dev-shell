@@ -17,6 +17,7 @@ in
     home.packages = with pkgs; [
       cloc
       mise
+      gh
       uv
     ];
 
