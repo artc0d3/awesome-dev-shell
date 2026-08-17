@@ -11,7 +11,12 @@
       "/tmp",
       "~/.cache/mise",
       "~/.local/state/mise",
-      "~/.local/share/mise"
-    ]
+      "~/.local/share/mise",
+      "~/.gradle",
+      "~/.npm"
+    ],
+    "read": [
+      "~/.npm-global"
+    ],
   }
 }
