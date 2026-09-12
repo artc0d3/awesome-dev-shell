@@ -10,10 +10,15 @@
     "allow": [
       "/tmp",
       "~/.cache/mise",
+      "~/.config/containers",
+      "~/.local/share/containers",
       "~/.local/state/mise",
       "~/.local/share/mise",
       "~/.gradle",
       "~/.npm"
+    ],
+    "allow_file": [
+      "/run/user/1000/podman/podman.sock"
     ],
     "read_file": [
       "~/.ssh/signing-key.pub",
