@@ -15,8 +15,13 @@
       "~/.gradle",
       "~/.npm"
     ],
-    "read": [
-      "~/.npm-global"
+    "read_file": [
+      "~/.ssh/signing-key.pub",
+      "~/.gitconfig",
+      "/etc/passwd"
+    ],
+    "bypass_protection": [
+      "~/.ssh/signing-key.pub"
     ]
   }
 }
