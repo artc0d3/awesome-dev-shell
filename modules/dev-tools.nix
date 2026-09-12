@@ -21,6 +21,21 @@ in
       uv
     ];
 
+    # Set up a global Node.js toolchain via mise.
+    #
+    # This is imperative rather than declarative because mise manages its own tool installs
+    # outside the Nix store; running it here just seeds the initial state on a fresh machine.
+    home.activation.setupNodeToolchain = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      export PATH="${pkgs.mise}/bin:$PATH"
+      run mise use --global nodejs@26
+    '';
+
+    # tuicr isn't in nixpkgs, so it's installed via mise's github backend.
+    home.activation.installTuicr = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      export PATH="${pkgs.mise}/bin:$PATH"
+      run mise use --global github:agavra/tuicr@v0.25.0
+    '';
+
     # Seed an empty, user-editable ~/.gitconfig on install if one does not exist.
     #
     # Home Manager renders ~/.config/git/config as an immutable Nix-store symlink.
