@@ -18,6 +18,7 @@ in
       cloc
       dos2unix
       mise
+      posting
       uv
     ];
 
