@@ -9,6 +9,7 @@
   "filesystem": {
     "allow": [
       "/tmp",
+      "~/.docker",
       "~/.cache/mise",
       "~/.local/state/mise",
       "~/.local/share/mise",
