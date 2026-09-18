@@ -17,6 +17,7 @@ in
     home.packages = with pkgs; [
       cloc
       dos2unix
+      gh
       mise
       posting
       uv
