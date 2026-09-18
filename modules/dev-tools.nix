@@ -39,6 +39,8 @@ in
       run mise use --global github:agavra/tuicr@v0.25.0
     '';
 
+    xdg.configFile."tuicr/config.toml".source = ../configs/tuicr/config.toml;
+
     # Seed an empty, user-editable ~/.gitconfig on install if one does not exist.
     #
     # Home Manager renders ~/.config/git/config as an immutable Nix-store symlink.
