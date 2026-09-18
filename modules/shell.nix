@@ -14,6 +14,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.sessionPath = [ "$HOME/.local/bin" ];
+
     programs.zsh = {
       enable = true;
       autosuggestion.enable = true;
