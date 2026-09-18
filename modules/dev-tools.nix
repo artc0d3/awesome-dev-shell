@@ -19,6 +19,7 @@ in
       dos2unix
       gh
       mise
+      nixfmt
       posting
       uv
     ];

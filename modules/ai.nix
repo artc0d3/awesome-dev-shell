@@ -8,6 +8,21 @@
 let
   cfg = config.ads.ai;
   npmPrefix = "${config.home.homeDirectory}/.npm-global";
+
+  # Status line for Claude Code. jq and git are baked into the wrapper because
+  # Claude Code runs the status line command with the environment it happened to
+  # inherit, which is not guaranteed to have either tool on PATH.
+  claudeStatusLine = pkgs.writeShellApplication {
+    name = "claude-statusline";
+    runtimeInputs = [
+      pkgs.jq
+      pkgs.git
+    ];
+    # The script handles its own failures so that one unresolvable segment drops
+    # out instead of blanking the line; strict mode would defeat that.
+    bashOptions = [ ];
+    text = builtins.readFile ../configs/claude/statusline.sh;
+  };
 in
 {
   options.ads.ai = {
@@ -65,6 +80,25 @@ in
     # Nono sandbox profiles for coding agents
     xdg.configFile."nono/profiles/yolo-claude.json".source = ../configs/nono/yolo-claude.json;
     xdg.configFile."nono/profiles/yolo-pi.json".source = ../configs/nono/yolo-pi.json;
+
+    # The status line is referenced from settings.json by path, so it needs a
+    # stable location outside the Nix store. It is never written to by Claude
+    # Code, so an immutable symlink is fine here.
+    home.file.".claude/statusline.sh".source = lib.getExe claudeStatusLine;
+
+    # Claude Code settings are seeded, not symlinked: Claude Code writes to
+    # ~/.claude/settings.json itself (enabling plugins, /config changes), which
+    # an immutable Nix-store symlink would break. The template is copied once on
+    # a fresh machine and is the user's to edit from then on — the same approach
+    # as ~/.gitconfig in modules/dev-tools.nix. Delete the file and re-activate
+    # to pick up a newer template.
+    home.activation.seedClaudeSettings = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ ! -e "${config.home.homeDirectory}/.claude/settings.json" ]; then
+        run mkdir -p "${config.home.homeDirectory}/.claude"
+        run install -m 644 ${../configs/claude/settings.json} \
+          "${config.home.homeDirectory}/.claude/settings.json"
+      fi
+    '';
 
     # Aliases for launching agents in yolo mode.
     # TMPDIR is set on the parent env rather than in the profile: nono inherits

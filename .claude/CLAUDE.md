@@ -19,5 +19,4 @@ Ubuntu-WSL (or any Linux with Nix) instance into a proper dev box in a few comma
 * `./flake.nix` — the Nix flake that exposes `homeConfigurations.wsl` (and future platform targets).
 * `./home.nix` — the main Home Manager entry point; imports all modules and enables features.
 * `./modules/*.nix` — feature-specific Home Manager modules (shell, neovim, dev-tools, etc.).
-* `./ads/` — the ADS CLI tool for seeding configuration templates.
 * `./configs/` — static configuration files grouped by the tool they belong to.

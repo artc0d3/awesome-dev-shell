@@ -187,14 +187,23 @@ extension points.
 You can include your own ZSH configuration in `~/.zshrc.local`, which is sourced at the end of the
 main `~/.zshrc`.
 
-### Configuration templates
+### Seeded configuration
 
-Some config files can't be managed by Nix because tools need to modify them at runtime. ADS ships
-opinionated templates and copies them on demand — once copied, the files are yours to edit freely.
+Some config files can't be managed by Nix because the tools need to modify them at runtime. Those
+are seeded from an opinionated template on first install and are yours to edit freely afterwards;
+activation never touches them again. To pick up a newer template, delete the file and re-apply.
 
-```bash
-ads config list          # show available tools and their config files
-ads config init <tool>   # copy templates (skips existing files)
+| File | Seeded from |
+| --- | --- |
+| `~/.claude/settings.json` | `configs/claude/settings.json` |
+| `~/.gitconfig` | an empty file (see [Git configuration](#git-configuration)) |
+
+Claude Code's status line is the exception: Claude Code only ever reads it, so `~/.claude/statusline.sh`
+stays a Nix-managed symlink. It shows the signed-in account, the current git branch, the active
+model, the tokens in the context window, and the 5-hour and weekly usage limits:
+
+```
+you@example.com · main · Opus 5 · 123k/200k · 5h 42% · 7d 92%
 ```
 
 ### Git configuration

@@ -8,7 +8,6 @@ let
 in
 {
   imports = [
-    ./modules/ads-tools.nix
     ./modules/ai.nix
     ./modules/dev-tools.nix
     ./modules/neovim.nix
@@ -22,7 +21,6 @@ in
   home.homeDirectory = homeDirectory;
   home.stateVersion = "26.05";
 
-  ads.ads-tools.enable = true;
   ads.ai.enable = true;
   ads.ai.pi.version = "0.80.2";
   ads.ai.pi.packages = [
