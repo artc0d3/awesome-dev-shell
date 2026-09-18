@@ -14,7 +14,11 @@
       "~/.local/state/mise",
       "~/.local/share/mise",
       "~/.gradle",
-      "~/.npm"
+      "~/.npm",
+      "~/Library/Application Support/rtk"
+    ],
+    "read": [
+      "~/.npm-global"
     ],
     "read_file": [
       "~/.ssh/signing-key.pub",
