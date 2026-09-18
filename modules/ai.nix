@@ -67,6 +67,7 @@ in
       claude-code
       nodejs_24
       nono
+      rtk
     ];
 
     # Redirect global npm installs to a user-writable prefix so packages like
