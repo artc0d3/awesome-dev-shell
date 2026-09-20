@@ -1,12 +1,4 @@
 {
-  "env": {
-    "ENABLE_LSP_TOOL": "1"
-  },
-  "enabledPlugins": {
-    "superpowers@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
-  },
   "extraKnownMarketplaces": {
     "anthropic-agent-skills": {
       "source": {
