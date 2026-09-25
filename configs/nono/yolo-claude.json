@@ -28,5 +28,11 @@
     "bypass_protection": [
       "~/.ssh/signing-key.pub"
     ]
+  },
+  "open_urls": {
+    "allow_localhost": true,
+    "allow_origins": [
+      "https://github.com"
+    ]
   }
 }
