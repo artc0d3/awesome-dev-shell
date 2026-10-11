@@ -21,6 +21,9 @@ in
       mise
       nixfmt
       posting
+      # Pulled from nixpkgs-unstable (see the overlay in flake.nix): tuicr is only
+      # packaged on the fast-moving channel. Bump with `nix flake update nixpkgs-unstable`.
+      unstable.tuicr
       uv
     ];
 
@@ -31,12 +34,6 @@ in
     home.activation.setupNodeToolchain = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       export PATH="${pkgs.mise}/bin:$PATH"
       run mise use --global nodejs@26
-    '';
-
-    # tuicr isn't in nixpkgs, so it's installed via mise's github backend.
-    home.activation.installTuicr = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      export PATH="${pkgs.mise}/bin:$PATH"
-      run mise use --global github:agavra/tuicr@v0.25.0
     '';
 
     # Linked out-of-store (to the repo working tree) so it can be edited live and
