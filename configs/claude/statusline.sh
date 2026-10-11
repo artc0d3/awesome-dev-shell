@@ -30,9 +30,10 @@ field() {
 segments=()
 
 # The account is not part of the status line payload, so it is read from the
-# state file Claude Code writes at login.
+# state file Claude Code writes at login, which lives in CLAUDE_CONFIG_DIR when
+# that is set.
 account=$(jq -r '.oauthAccount | .emailAddress // .displayName // empty' \
-  "$HOME/.claude.json" 2>/dev/null)
+  "${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json" 2>/dev/null)
 [ -n "$account" ] && segments+=("$account")
 
 cwd=$(field '.workspace.current_dir // .cwd')

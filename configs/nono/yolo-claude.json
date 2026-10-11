@@ -3,35 +3,44 @@
   "meta": {
     "name": "yolo-claude"
   },
-  "workdir": {
-    "access": "readwrite"
-  },
   "filesystem": {
     "allow": [
-      "/tmp",
-      "~/.docker",
+      "$WORKDIR",
       "~/.cache/mise",
-      "~/.local/state/mise",
-      "~/.local/share/mise",
-      "~/.gradle",
+      "~/.gradle/caches",
+      "~/.gradle/wrapper",
+      "~/.gradle/daemon",
+      "~/.gradle/native",
+      "~/.gradle/.tmp",
       "~/.npm",
-      "~/Library/Application Support/rtk"
+      { "path": "~/Library/Application Support/rtk", "when": "macos" },
+      { "path": "~/.local/share/rtk", "when": "linux" }
     ],
     "read": [
-      "~/.npm-global"
+      "~/.npm-global",
+      "~/.local/share/mise",
+      "~/.local/state/mise"
     ],
     "read_file": [
-      "~/.ssh/signing-key.pub",
-      "~/.gitconfig",
-      "/etc/passwd"
+      "~/.ssh/signing-key.pub"
     ],
     "bypass_protection": [
       "~/.ssh/signing-key.pub"
+    ],
+    "deny": [
+      "$NONO_CONFIG/profiles/yolo-claude.json"
+    ],
+    "suppress_save_prompt": [
+      "/"
     ]
   },
   "open_urls": {
     "allow_localhost": true,
     "allow_origins": [
+      "https://claude.ai",
+      "https://claude.com",
+      "https://api.anthropic.com",
+      "https://platform.claude.com",
       "https://github.com"
     ]
   }

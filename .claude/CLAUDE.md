@@ -20,3 +20,9 @@ Ubuntu-WSL (or any Linux with Nix) instance into a proper dev box in a few comma
 * `./home.nix` — the main Home Manager entry point; imports all modules and enables features.
 * `./modules/*.nix` — feature-specific Home Manager modules (shell, neovim, dev-tools, etc.).
 * `./configs/` — static configuration files grouped by the tool they belong to.
+
+## Nono sandbox
+
+* `configs/nono/yolo-claude.json` is the profile of the sandbox you may be running in. It denies access to itself, so you cannot read or edit it from inside the sandbox; this is intentional.
+* To read it, use the last committed version: `git show HEAD:configs/nono/yolo-claude.json`. Uncommitted edits are not visible this way.
+* Don't try to work around the denial. Propose profile changes to the user instead, who will apply and test them outside the sandbox.

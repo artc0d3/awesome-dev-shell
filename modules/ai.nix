@@ -8,6 +8,7 @@
 let
   cfg = config.ads.ai;
   npmPrefix = "${config.home.homeDirectory}/.npm-global";
+  claudeConfigDir = "${config.home.homeDirectory}/.claude";
 
   # Status line for Claude Code. jq and git are baked into the wrapper because
   # Claude Code runs the status line command with the environment it happened to
@@ -22,6 +23,27 @@ let
     # out instead of blanking the line; strict mode would defeat that.
     bashOptions = [ ];
     text = builtins.readFile ../configs/claude/statusline.sh;
+  };
+
+  # Launches Claude Code in yolo mode inside the nono sandbox.
+  #
+  # TMPDIR points at /tmp/claude-<uid> (granted by the nolabs-ai/claude base
+  # profile) because the macOS default under /var/folders is not writable in the
+  # sandbox. It is set on the parent env rather than in the profile: nono
+  # inherits all env vars by default, and nono itself writes its capability
+  # state file (used by `nono why --self`) to $TMPDIR before the sandbox goes
+  # up, so the directory has to exist up front. The UID is resolved at runtime
+  # instead of being hardcoded, since it differs between WSL (1000) and macOS
+  # (501).
+  yoloClaude = pkgs.writeShellApplication {
+    name = "yoloclaude";
+    text = ''
+      tmp="/tmp/claude-$(id -u)"
+      [ -d "$tmp" ] || mkdir -m 700 "$tmp"
+      export TMPDIR="$tmp"
+      exec ${lib.getExe pkgs.unstable.nono} run --profile yolo-claude -- \
+        claude --dangerously-skip-permissions "$@"
+    '';
   };
 in
 {
@@ -38,19 +60,58 @@ in
       unstable.nono
       nodejs_24
       rtk
+      yoloClaude
     ];
 
     # Redirect global npm installs to a user-writable prefix so npm packages
     # can be installed globally without touching the Nix store.
     home.sessionVariables = {
       NPM_CONFIG_PREFIX = npmPrefix;
+      # Keep all Claude Code state, including the .claude.json that otherwise
+      # sits loose in $HOME, under ~/.claude. Claude Code saves .claude.json
+      # through a sibling temp file (.claude.json.tmp.<pid>.<hex>) and a rename;
+      # in $HOME those temp files fall outside the nono sandbox grants, while
+      # ~/.claude is granted as a whole by the nolabs-ai/claude base profile.
+      # Set globally, not just for yoloclaude, so sandboxed and unsandboxed
+      # sessions share the same state.
+      CLAUDE_CONFIG_DIR = claudeConfigDir;
     };
 
     home.sessionPath = [ "${npmPrefix}/bin" ];
 
     # Nono sandbox profile for Claude Code. Linked out-of-store (to the repo
-    # working tree) rather than copied into the Nix store, so they can be tweaked
+    # working tree) rather than copied into the Nix store, so it can be tweaked
     # live and committed without a redeploy. See modules/dotfiles.nix.
+    #
+    # Since the sandbox can write to the working directory, an agent working in
+    # this repo could otherwise rewrite the policy that confines its next
+    # session. The profile therefore denies its own path. nono resolves the
+    # symlink, so the deny covers the file in the repo, wherever it is checked
+    # out. It blocks reads as well as writes. On Linux, Landlock can't carve a
+    # deny out of a granted directory, so nono refuses to start when the working
+    # directory contains the profile (i.e. inside this repo) instead of
+    # silently leaving it writable.
+    #
+    # The profile grants $WORKDIR (the directory nono is started from) directly,
+    # which replaces the --allow-cwd flag: workdir.access only sets the access
+    # level, and without the flag nono would still ask before sharing the CWD.
+    #
+    # It also lists "/" under suppress_save_prompt, so when a session ends nono
+    # still reports every denied path but no longer offers to save them as
+    # grants. Grants belong in the profile JSON, reviewed and committed, not
+    # accepted ad hoc at exit.
+    #
+    # Other choices worth knowing about:
+    # - Tool installs (mise) are read-only, and only the parts of ~/.gradle that
+    #   Gradle needs to run are writable. Anything the sandbox can write that is
+    #   later executed outside it (mise binaries and trusted-configs, Gradle
+    #   init.d scripts) would let the agent escape the sandbox.
+    # - git commit works without extra grants: /etc/passwd and ~/.gitconfig are
+    #   covered by the base profile's system_read_* and git_config groups.
+    #   git push does not: ~/.ssh, including the ssh-agent socket, is blocked
+    #   by the required deny_credentials group.
+    # - open_urls replaces the base profile's list instead of extending it, so
+    #   the Claude login origins from nolabs-ai/claude are repeated there.
     xdg.configFile."nono/profiles/yolo-claude.json".source =
       config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/nono/yolo-claude.json";
 
@@ -73,10 +134,17 @@ in
       fi
     '';
 
-    # Alias for launching Claude Code in yolo mode.
-    # TMPDIR is set on the parent env rather than in the profile: nono inherits
-    # all env vars by default.
-    programs.zsh.shellAliases.yoloclaude = "TMPDIR=/tmp/claude-1000 nono run --profile yolo-claude --allow-cwd -- claude --dangerously-skip-permissions";
+    # One-time move of ~/.claude.json into CLAUDE_CONFIG_DIR (see above), so an
+    # existing machine keeps its login, onboarding and per-project state.
+    # Skipped when the file is already a symlink or the new location is taken.
+    home.activation.migrateClaudeJson = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [ -f "${config.home.homeDirectory}/.claude.json" ] \
+        && [ ! -L "${config.home.homeDirectory}/.claude.json" ] \
+        && [ ! -e "${claudeConfigDir}/.claude.json" ]; then
+        run mkdir -p "${claudeConfigDir}"
+        run mv "${config.home.homeDirectory}/.claude.json" "${claudeConfigDir}/.claude.json"
+      fi
+    '';
 
     # Pull the shared Nono base profile. The activation PATH is minimal, so add
     # nono explicitly rather than relying on the login shell.
