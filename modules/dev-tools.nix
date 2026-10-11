@@ -39,7 +39,10 @@ in
       run mise use --global github:agavra/tuicr@v0.25.0
     '';
 
-    xdg.configFile."tuicr/config.toml".source = ../configs/tuicr/config.toml;
+    # Linked out-of-store (to the repo working tree) so it can be edited live and
+    # committed without a redeploy. See modules/dotfiles.nix.
+    xdg.configFile."tuicr/config.toml".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/tuicr/config.toml";
 
     # Seed an empty, user-editable ~/.gitconfig on install if one does not exist.
     #

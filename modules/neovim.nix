@@ -1,8 +1,11 @@
-# Neovim with LazyVim starter configuration.
-# Installs Neovim and bootstraps the LazyVim starter template on first
-# activation.  The resulting ~/.config/nvim is a plain, mutable directory
-# that the user can freely edit — Nix will not overwrite it on subsequent
-# rebuilds.
+# Neovim with a LazyVim-based configuration.
+#
+# ~/.config/nvim is an out-of-store symlink to configs/nvim in this repo's
+# working tree (see modules/dotfiles.nix). Editing the live config therefore
+# edits the tracked files directly: changes take effect immediately in Neovim,
+# are committed straight to git, and can be restored with `git checkout` — no
+# Home Manager redeploy required. LazyVim writes lazy-lock.json back into this
+# directory, which lands in the working tree and should be committed.
 {
   config,
   pkgs,
@@ -35,15 +38,12 @@ in
       unzip
     ];
 
-    # Seed the Neovim config if none present yet
-    home.activation.bootstrapLazyVim = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      nvim_config="${config.home.homeDirectory}/.config/nvim"
-      if [ ! -f "$nvim_config/init.lua" ]; then
-        tmp=$(${pkgs.coreutils}/bin/mktemp -d)
-        run ${pkgs.git}/bin/git clone https://github.com/artc0d3/neovim.git "$tmp/starter"
-        run ${pkgs.coreutils}/bin/cp -rn "$tmp/starter/." "$nvim_config/"
-        run ${pkgs.coreutils}/bin/rm -rf "$tmp"
-      fi
-    '';
+    # Link ~/.config/nvim to the config tracked in this repo. See the module
+    # header for the rationale. Note: if ~/.config/nvim already exists as a real
+    # directory (e.g. from the previous clone-based setup), Home Manager will
+    # refuse to replace it — move or remove it first, after saving any unpushed
+    # edits.
+    xdg.configFile."nvim".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/nvim";
   };
 }

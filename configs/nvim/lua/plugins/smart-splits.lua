@@ -1,3 +1,4 @@
+-- Smart pane navigation, integrates with tmux.
 return {
 	"mrjones2014/smart-splits.nvim",
 	lazy = false,

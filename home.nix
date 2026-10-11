@@ -9,6 +9,7 @@ in
 {
   imports = [
     ./modules/ai.nix
+    ./modules/dotfiles.nix
     ./modules/dev-tools.nix
     ./modules/neovim.nix
     ./modules/shell.nix

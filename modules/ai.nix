@@ -64,9 +64,12 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
-      claude-code
+      # Pulled from nixpkgs-unstable (see the overlay in flake.nix): claude-code
+      # moves fast and the frozen stable channel lags it by weeks. Bump with
+      # `nix flake update nixpkgs-unstable`.
+      unstable.claude-code
+      unstable.nono
       nodejs_24
-      nono
       rtk
     ];
 
@@ -78,9 +81,13 @@ in
 
     home.sessionPath = [ "${npmPrefix}/bin" ];
 
-    # Nono sandbox profiles for coding agents
-    xdg.configFile."nono/profiles/yolo-claude.json".source = ../configs/nono/yolo-claude.json;
-    xdg.configFile."nono/profiles/yolo-pi.json".source = ../configs/nono/yolo-pi.json;
+    # Nono sandbox profiles for coding agents. Linked out-of-store (to the repo
+    # working tree) rather than copied into the Nix store, so they can be tweaked
+    # live and committed without a redeploy. See modules/dotfiles.nix.
+    xdg.configFile."nono/profiles/yolo-claude.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/nono/yolo-claude.json";
+    xdg.configFile."nono/profiles/yolo-pi.json".source =
+      config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/nono/yolo-pi.json";
 
     # The status line is referenced from settings.json by path, so it needs a
     # stable location outside the Nix store. It is never written to by Claude
@@ -127,7 +134,7 @@ in
     # Pull the shared Nono profiles. The activation PATH is minimal, so add
     # nono explicitly rather than relying on the login shell.
     home.activation.pullNonoProfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      export PATH="${pkgs.nono}/bin:$PATH"
+      export PATH="${pkgs.unstable.nono}/bin:$PATH"
       run nono pull always-further/pi
       run nono pull always-further/claude
     '';
