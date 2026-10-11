@@ -3,6 +3,11 @@
   "meta": {
     "name": "yolo-claude"
   },
+  "environment": {
+    "set_vars": {
+      "DOCKER_CONFIG": "$HOME/.cache/docker-sandbox"
+    }
+  },
   "filesystem": {
     "allow": [
       "$WORKDIR",
