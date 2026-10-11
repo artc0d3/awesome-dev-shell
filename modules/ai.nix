@@ -136,7 +136,7 @@ in
     home.activation.pullNonoProfiles = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       export PATH="${pkgs.unstable.nono}/bin:$PATH"
       run nono pull always-further/pi
-      run nono pull always-further/claude
+      run nono pull nolabs-ai/claude
     '';
   };
 }
