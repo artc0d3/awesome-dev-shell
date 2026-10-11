@@ -11,7 +11,7 @@ Supports **Ubuntu on WSL2** and **macOS**.
 - **Modern shell** — zsh + starship + the full `eza`/`bat`/`fd`/`ripgrep` lineup out of the box.
 - **Polyglot runtimes** — `mise` for SDK management.
 - **Containers ready** — podman (WSL) or Colima (macOS) with Docker compatibility.
-- **AI on tap** — `claude-code` and `pi` pre-installed for pair-programming from the terminal.
+- **AI on tap** — `claude-code` pre-installed for pair-programming from the terminal.
 
 ## Loadout
 
@@ -56,7 +56,6 @@ Built on **Nix** with **Home Manager 26.05** managing the user environment.
 ### AI
 
 - **claude-code** — Anthropic's official CLI for pair-programming with Claude.
-- **pi** - ultra-light customizable coding agent.
 - **nono** - coding agent sandboxing.
 
 ## Getting started
