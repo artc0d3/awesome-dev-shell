@@ -22,6 +22,8 @@
       { "path": "~/.local/share/rtk", "when": "linux" }
     ],
     "read": [
+      "~/.colima/default",
+      "~/.gradle",
       "~/.npm-global",
       "~/.local/share/mise",
       "~/.local/state/mise"
