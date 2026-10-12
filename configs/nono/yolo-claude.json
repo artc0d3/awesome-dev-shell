@@ -5,7 +5,12 @@
   },
   "environment": {
     "set_vars": {
-      "DOCKER_CONFIG": "$HOME/.cache/docker-sandbox"
+      "DOCKER_CONFIG": "$HOME/.cache/docker-sandbox",
+      "GIT_CONFIG_COUNT": "2",
+      "GIT_CONFIG_KEY_0": "commit.gpgsign",
+      "GIT_CONFIG_VALUE_0": "false",
+      "GIT_CONFIG_KEY_1": "tag.gpgsign",
+      "GIT_CONFIG_VALUE_1": "false"
     }
   },
   "filesystem": {
@@ -18,8 +23,14 @@
       "~/.gradle/native",
       "~/.gradle/.tmp",
       "~/.npm",
-      { "path": "~/Library/Application Support/rtk", "when": "macos" },
-      { "path": "~/.local/share/rtk", "when": "linux" }
+      {
+        "path": "~/Library/Application Support/rtk",
+        "when": "macos"
+      },
+      {
+        "path": "~/.local/share/rtk",
+        "when": "linux"
+      }
     ],
     "read": [
       "~/.colima/default",
@@ -27,12 +38,6 @@
       "~/.npm-global",
       "~/.local/share/mise",
       "~/.local/state/mise"
-    ],
-    "read_file": [
-      "~/.ssh/signing-key.pub"
-    ],
-    "bypass_protection": [
-      "~/.ssh/signing-key.pub"
     ],
     "deny": [
       "$NONO_CONFIG/profiles/yolo-claude.json"

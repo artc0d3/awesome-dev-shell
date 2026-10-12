@@ -110,6 +110,12 @@ in
     #   covered by the base profile's system_read_* and git_config groups.
     #   git push does not: ~/.ssh, including the ssh-agent socket, is blocked
     #   by the required deny_credentials group.
+    # - The agent commits unsigned. The signing key lives in the main ssh-agent,
+    #   which also holds the authentication key, so it is deliberately kept out
+    #   of reach. The profile turns commit.gpgsign and tag.gpgsign off through
+    #   GIT_CONFIG_COUNT/KEY_n/VALUE_n env vars, which apply inside the sandbox
+    #   only. Review the branch, then sign it yourself outside the sandbox:
+    #   git rebase --force-rebase --gpg-sign $(git merge-base HEAD main)
     # - open_urls replaces the base profile's list instead of extending it, so
     #   the Claude login origins from nolabs-ai/claude are repeated there.
     xdg.configFile."nono/profiles/yolo-claude.json".source =
