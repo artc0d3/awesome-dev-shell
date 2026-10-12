@@ -7,6 +7,7 @@
 }:
 let
   cfg = config.ads.dev-tools;
+  lazygitConfig = config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/lazygit/config.yml";
 in
 {
   options.ads.dev-tools = {
@@ -40,6 +41,23 @@ in
     # committed without a redeploy. See modules/dotfiles.nix.
     xdg.configFile."tuicr/config.toml".source =
       config.lib.file.mkOutOfStoreSymlink "${config.ads.dotfilesRoot}/configs/tuicr/config.toml";
+
+    # Lazygit config, linked out-of-store like tuicr's above. (The lazygit package
+    # itself comes with neovim.nix, which uses it for Snacks.lazygit.)
+    #
+    # Only the file is linked, not the directory: lazygit writes its own state.yml
+    # next to it, which does not belong in the repo.
+    #
+    # On macOS, lazygit reads ~/Library/Application Support/lazygit, not
+    # ~/.config/lazygit, unless XDG_CONFIG_HOME is set (which this setup doesn't).
+    # Linking to the native location avoids exporting XDG_CONFIG_HOME, which would
+    # move the config of every other XDG-aware tool on the Mac as well.
+    home.file."Library/Application Support/lazygit/config.yml" = lib.mkIf pkgs.stdenv.isDarwin {
+      source = lazygitConfig;
+    };
+    xdg.configFile."lazygit/config.yml" = lib.mkIf (!pkgs.stdenv.isDarwin) {
+      source = lazygitConfig;
+    };
 
     # Seed an empty, user-editable ~/.gitconfig on install if one does not exist.
     #

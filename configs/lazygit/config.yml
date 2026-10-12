@@ -1,0 +1,32 @@
+# Lazygit configuration. Linked into place by modules/dev-tools.nix.
+
+git:
+  # Sign commits in the background instead of suspending lazygit to a terminal
+  # for each one. The suspend only exists so GPG can prompt for a passphrase;
+  # SSH signing goes through the already-unlocked ssh-agent (see modules/ssh.nix)
+  # and never prompts.
+  overrideGpg: true
+
+customCommands:
+  # Sign every commit of the checked-out branch since it forked off the selected
+  # branch, e.g. after reviewing a branch a sandboxed coding agent committed
+  # unsigned (see modules/ai.nix). Usage: check out the feature branch, select
+  # its base branch in the branches panel, press S. With the checked-out branch
+  # itself selected (where the cursor starts), the base defaults to main, so for
+  # the common case pressing S right away is enough.
+  #
+  # Rebasing onto the merge-base (rather than the selected branch itself) only
+  # re-signs: the branch is not moved onto newer commits, so no new conflicts
+  # can come up. --force-rebase makes git rewrite, and thus sign, every commit
+  # even though nothing else about it changes. Commit hashes change, so an
+  # already pushed branch needs `push --force-with-lease`.
+  - key: "S"
+    context: "localBranches"
+    description: "Sign all commits since the selected branch (or main)"
+    prompts:
+      - type: "confirm"
+        title: "Sign commits"
+        body: "Rewrite and sign all commits of {{.CheckedOutBranch.Name}} since it forked off {{if eq .SelectedLocalBranch.Name .CheckedOutBranch.Name}}main{{else}}{{.SelectedLocalBranch.Name}}{{end}}?"
+    command: "git rebase --force-rebase --gpg-sign $(git merge-base HEAD {{if eq .SelectedLocalBranch.Name .CheckedOutBranch.Name}}main{{else}}{{.SelectedLocalBranch.Name | quote}}{{end}})"
+    loadingText: "Signing commits..."
+    output: "log"
