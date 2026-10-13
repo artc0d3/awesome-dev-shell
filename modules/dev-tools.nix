@@ -26,6 +26,7 @@ in
       # packaged on the fast-moving channel. Bump with `nix flake update nixpkgs-unstable`.
       unstable.tuicr
       uv
+      wget
     ];
 
     # Set up a global Node.js toolchain via mise.
