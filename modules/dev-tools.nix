@@ -85,6 +85,31 @@ in
         # The file itself is not managed here — populate ~/.config/git/allowed_signers manually with `<email> <contents of
         # signing-key.pub>` to enable local verification. Until then, verification reports "no signature could be checked", but signing itself is unaffected.
         gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.config/git/allowed_signers";
+
+        # Record conflict resolutions and replay them when the same conflict
+        # comes up again, e.g. when rebasing a branch onto main repeatedly.
+        # Replayed resolutions are left unstaged for review.
+        rerere.enabled = true;
+
+        # Rebase local commits onto the remote on `git pull` instead of
+        # creating merge commits. Only unpushed commits are rewritten.
+        pull.rebase = true;
+
+        # Stash uncommitted changes before a rebase and restore them after,
+        # so `git pull` (see above) and rebases work on a dirty tree.
+        rebase.autoStash = true;
+
+        # Let a plain `git push` create the upstream branch on first push,
+        # instead of failing until `git push -u origin <branch>` is used.
+        push.autoSetupRemote = true;
+
+        # Diff by unique lines first, which keeps hunks aligned with the code's
+        # structure (e.g. a whole added function rather than a moved `}`).
+        diff.algorithm = "histogram";
+
+        # Show the common ancestor in conflict markers, with lines both sides
+        # changed identically moved out of the conflict. Requires git >= 2.35.
+        merge.conflictStyle = "zdiff3";
       };
     };
   };
