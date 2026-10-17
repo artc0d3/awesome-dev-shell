@@ -1,7 +1,16 @@
 -- Smart pane navigation, integrates with tmux.
+--
+-- Must not be lazy loaded: the marker is only set once setup() runs. The tmux
+-- bindings wrap at the edge, matching the default `move.at_edge = "wrap"`.
 return {
 	"mrjones2014/smart-splits.nvim",
 	lazy = false,
+	dependencies = {
+		{ "smart-splits-nvim/backend-tmux", main = "smart-splits-backend-tmux" },
+	},
+	opts = {
+		mux = { backend = "smart-splits-backend-tmux" },
+	},
 	keys = {
 		{
 			"<C-h>",
