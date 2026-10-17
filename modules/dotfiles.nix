@@ -18,7 +18,7 @@
     example = "/home/dev/code/awesome-dev-shell";
     description = ''
       Absolute path to this repository's working tree on the target machine.
-      Used as the target for out-of-store symlinks (nvim, nono, tuicr, ...), so
+      Used as the target for out-of-store symlinks (nvim, nono, tmux, tuicr, ...), so
       those configs can be edited in place and committed without a redeploy.
 
       The repository MUST be checked out at this path for the links to resolve;
