@@ -35,13 +35,38 @@ let
   # up, so the directory has to exist up front. The UID is resolved at runtime
   # instead of being hardcoded, since it differs between WSL (1000) and macOS
   # (501).
+  #
+  # Inside tmux, the window is renamed to "claude (<dir>)", matching the
+  # automatic-rename-format in configs/tmux/tmux.conf. Without this, tmux would
+  # show "nono": nono stays in the foreground as the sandbox supervisor, so it
+  # is what tmux sees as the pane's command. Renaming a window turns
+  # automatic-rename off for it, so the previous name and setting are restored
+  # on exit. `tmux` is taken from PATH rather than pinned, as it must match the
+  # version of the running server. $TMUX_PANE targets the window the script was
+  # started in, even if another window is focused by then.
   yoloClaude = pkgs.writeShellApplication {
     name = "yoloclaude";
     text = ''
       tmp="/tmp/claude-$(id -u)"
       [ -d "$tmp" ] || mkdir -m 700 "$tmp"
       export TMPDIR="$tmp"
-      exec ${lib.getExe pkgs.unstable.nono} run --profile yolo-claude -- \
+
+      if [ -n "''${TMUX_PANE:-}" ]; then
+        prev_name="$(tmux display-message -p -t "$TMUX_PANE" '#{window_name}')"
+        prev_auto="$(tmux display-message -p -t "$TMUX_PANE" '#{automatic-rename}')"
+        restore_window_name() {
+          if [ "$prev_auto" = 1 ]; then
+            tmux set-option -w -t "$TMUX_PANE" automatic-rename on
+          else
+            tmux rename-window -t "$TMUX_PANE" "$prev_name"
+          fi
+        }
+        trap restore_window_name EXIT
+        tmux rename-window -t "$TMUX_PANE" "claude ($(basename "$PWD"))"
+      fi
+
+      # Not exec'd, so the EXIT trap above still runs once Claude Code quits.
+      ${lib.getExe pkgs.unstable.nono} run --profile yolo-claude -- \
         claude --dangerously-skip-permissions "$@"
     '';
   };
