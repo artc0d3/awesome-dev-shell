@@ -8,7 +8,7 @@ return {
 			-- Listed first so it takes precedence over the official registry.
 			-- See lua/mason-registry-custom/init.lua
 			registries = {
---				"lua:mason-registry-custom",
+				"lua:mason-registry-custom",
 				"github:mason-org/mason-registry",
 			},
 		},

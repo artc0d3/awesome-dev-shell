@@ -6,7 +6,7 @@
 --
 -- To bump: change `version` below and check that the archive still unpacks into
 -- kotlin-server-<version>/bin/intellij-server.
-local version = "263.4421.0"
+local version = "263.6379.0"
 
 local base = "https://download.jetbrains.com/language-server/kotlin-server/" .. version
 
