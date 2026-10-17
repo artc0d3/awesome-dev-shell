@@ -28,6 +28,19 @@ in
 
     programs.bat.enable = true;
 
+    # Syntax-highlighted diffs for git (git diff/log/show/add -p) and lazygit
+    # (see git.pagers in configs/lazygit/config.yml). enableGitIntegration sets
+    # delta as git's pager and interactive diff filter.
+    programs.delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        # n/N jump between files in a diff.
+        navigate = true;
+        line-numbers = true;
+      };
+    };
+
     programs.eza = {
       enable = true;
       enableZshIntegration = true;

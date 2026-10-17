@@ -7,6 +7,14 @@ git:
   # and never prompts.
   overrideGpg: true
 
+  # Render diffs with delta (installed by modules/shell-tools.nix), which picks
+  # up its options from the [delta] section of the git config. --paging=never
+  # because lazygit does its own scrolling; --dark because delta can't detect
+  # the terminal background from inside lazygit. Cycle pagers with `|`.
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
+
 customCommands:
   # Sign every commit of the checked-out branch since it forked off the selected
   # branch, e.g. after reviewing a branch a sandboxed coding agent committed
