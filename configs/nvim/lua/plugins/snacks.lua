@@ -104,6 +104,13 @@ return {
 			end,
 			desc = "Marks",
 		},
+		{
+			"<leader>sR",
+			function()
+				Snacks.picker.resume()
+			end,
+			desc = "Resume last picker",
+		},
 
 		-- Scratchpad
 		{

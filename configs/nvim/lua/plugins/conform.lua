@@ -29,7 +29,7 @@ return {
 			lsp_format = "fallback",
 		},
 		formatters_by_ft = {
-			kotlin     = { "ktlint" },
+			kotlin     = { "ktfmt" },
 			lua        = { "stylua" },
 			sh         = { "shfmt" },
 			bash       = { "shfmt" },

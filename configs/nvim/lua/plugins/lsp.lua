@@ -12,6 +12,21 @@ return {
 				"github:mason-org/mason-registry",
 			},
 		},
+		-- mason.nvim has no ensure_installed of its own, and mason-lspconfig's
+		-- (below) only covers language servers. Install the formatters used by
+		-- conform.lua here. taplo is omitted: it is installed as an LSP below.
+		config = function(_, opts)
+			require("mason").setup(opts)
+			local registry = require("mason-registry")
+			registry.refresh(function()
+				for _, name in ipairs({ "ktfmt", "prettier", "shfmt", "stylua" }) do
+					local ok, pkg = pcall(registry.get_package, name)
+					if ok and not pkg:is_installed() and not pkg:is_installing() then
+						pkg:install()
+					end
+				end
+			end)
+		end,
 	},
 	{
 		"neovim/nvim-lspconfig",
